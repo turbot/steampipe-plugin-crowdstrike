@@ -23,51 +23,104 @@ func tableCrowdStrikeHost(_ context.Context) *plugin.Table {
 			KeyColumns: plugin.SingleColumn("device_id"),
 		},
 		Columns: []*plugin.Column{
-			{
-				Name:        "device_id",
-				Description: "Host device ID.",
-				Type:        proto.ColumnType_STRING,
-				Hydrate:     getCrowdStrikeHost,
-			},
-			{
-				Name:        "agent_load_flags",
-				Description: "TODO.",
-				Type:        proto.ColumnType_INT,
-				Hydrate:     getCrowdStrikeHost,
-			},
-			{
-				Name:        "agent_local_time",
-				Description: "TODO.",
-				Type:        proto.ColumnType_TIMESTAMP,
-				Hydrate:     getCrowdStrikeHost,
-			},
-			{
-				Name:        "agent_version",
-				Description: "TODO.",
-				Type:        proto.ColumnType_STRING,
-				Hydrate:     getCrowdStrikeHost,
-			},
-			{
-				Name:        "hostname",
-				Description: "TODO.",
-				Type:        proto.ColumnType_STRING,
-				Hydrate:     getCrowdStrikeHost,
-			},
-			{
-				Name:        "raw",
-				Description: "Raw info.",
-				Type:        proto.ColumnType_JSON,
-				Hydrate:     getCrowdStrikeHost,
-				Transform:   transform.FromValue(),
-			},
+			{Name: "agent_load_flags", Description: "TODO.", Type: proto.ColumnType_INT, Hydrate: getCrowdStrikeHost},
+			{Name: "agent_local_time", Description: "TODO.", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeHost},
+			{Name: "agent_version", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "bios_manufacturer", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "bios_version", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "build_number", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "cid", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "config_id_base", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "config_id_build", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "config_id_platform", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "cpu_signature", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "detection_suppression_status", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "device_id", Description: "Host device ID.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "device_policies", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+
+			{Name: "email", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "external_ip", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "first_login_timestamp", Description: "TODO.", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeHost},
+			{Name: "first_seen", Description: "TODO.", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeHost},
+
+			{Name: "host_hidden_status", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "hostname", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "instance_id", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "last_login_timestamp", Description: "TODO.", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeHost},
+			{Name: "last_seen", Description: "TODO.", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeHost},
+
+			{Name: "local_ip", Description: "TODO.", Type: proto.ColumnType_INET, Hydrate: getCrowdStrikeHost},
+			{Name: "mac_address", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "machine_domain", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "major_version", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "minor_version", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "managed_apps", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+			{Name: "meta", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+
+			{Name: "notes", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+			{Name: "os_version", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "ou", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+
+			{Name: "platform_id", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "platform_name", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "pod_id", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_name", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_namespace", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_service_account_name", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_hostname", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_annotations", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_labels", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_host_ipv4", Transform: transform.FromField("PodHostIp4"), Description: "TODO.", Type: proto.ColumnType_INET, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_host_ipv6", Transform: transform.FromField("PodHostIp6"), Description: "TODO.", Type: proto.ColumnType_INET, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_ipv4", Transform: transform.FromField("PodIp4"), Description: "TODO.", Type: proto.ColumnType_INET, Hydrate: getCrowdStrikeHost},
+			{Name: "pod_ipv6", Transform: transform.FromField("PodIp6"), Description: "TODO.", Type: proto.ColumnType_INET, Hydrate: getCrowdStrikeHost},
+
+			{Name: "pointer_size", Description: "TODO.", Type: proto.ColumnType_INT, Hydrate: getCrowdStrikeHost},
+			{Name: "policies", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+
+			{Name: "product_type", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "product_type_desc", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "provision_status", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "reduced_functionality_mode", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "release_group", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "serial_number", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "service_pack_major", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "service_pack_minor", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "service_provider", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "service_provider_account_id", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "site_name", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "slow_changing_modified_timestamp", Description: "TODO.", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeHost},
+
+			{Name: "status", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "system_manufacturer", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+			{Name: "system_product_name", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
+
+			{Name: "tags", Description: "TODO.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeHost},
+			{Name: "zone_group", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
 
 			// Steampipe standard columns
-			{
-				Name:        "title",
-				Description: "Title of the resource.",
-				Type:        proto.ColumnType_STRING,
-				Transform:   transform.FromField("device_id"),
-			},
+			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Hostname")},
 		},
 	}
 }
@@ -86,11 +139,11 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	}
 
 	filter := ""
-	var deviceIds []string
 
 	limit := int64(500)
+	offset := ""
 
-	for offset := ""; ; {
+	for {
 		response, err := client.Hosts.QueryDevicesByFilterScroll(&hosts.QueryDevicesByFilterScrollParams{
 			Context: context.Background(),
 			Limit:   &limit,
@@ -107,19 +160,20 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 			break
 		}
 
-		deviceIds = append(deviceIds, hostDeviceIds...)
+		for _, deviceId := range hostDeviceIds {
+			d.StreamListItem(ctx, hostStruct{
+				DeviceId: deviceId,
+			})
+			if d.QueryStatus.RowsRemaining(ctx) < 1 {
+				return nil, nil
+			}
+		}
 
 		if *response.Payload.Meta.Pagination.Offset == "" {
 			break // no more next page indicates we are done
 		}
 
 		offset = *response.Payload.Meta.Pagination.Offset
-	}
-
-	for _, deviceId := range deviceIds {
-		d.StreamListItem(ctx, hostStruct{
-			DeviceId: deviceId,
-		})
 	}
 
 	return nil, nil
