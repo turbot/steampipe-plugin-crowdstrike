@@ -37,7 +37,6 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 			{Name: "product_type_desc", Description: "TODO", Type: proto.ColumnType_STRING},
 			{Name: "sensor_file_status", Description: "TODO", Type: proto.ColumnType_STRING},
 			{Name: "system_serial_number", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "raw", Description: "Raw info.", Type: proto.ColumnType_JSON, Transform: transform.FromValue()},
 
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Hostname")},
