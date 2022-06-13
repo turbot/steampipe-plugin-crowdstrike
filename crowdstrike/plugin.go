@@ -16,7 +16,9 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		},
 		DefaultTransform: transform.FromGo().NullIfZero(),
 		TableMap: map[string]*plugin.Table{
-			"crowdstrike_host": tableCrowdStrikeHost(ctx),
+			"crowdstrike_host":           tableCrowdStrikeHost(ctx),
+			"crowdstrike_zta_assessment": tableCrowdStrikeZtaAssessment(ctx),
+			"crowdstrike_zta_compliance": tableCrowdStrikeZtaCompliance(ctx),
 		},
 	}
 
