@@ -70,7 +70,7 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 				WithIds([]string{deviceId}),
 		)
 		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeHosts", "query_error", err)
+			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeZtaAssesment", "query_error", err)
 			return nil, err
 		}
 
