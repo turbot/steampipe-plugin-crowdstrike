@@ -120,7 +120,7 @@ func tableCrowdStrikeHost(_ context.Context) *plugin.Table {
 			{Name: "zone_group", Description: "TODO.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost},
 
 			// Steampipe standard columns
-			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Hostname")},
+			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeHost, Transform: transform.FromField("Hostname")},
 		},
 	}
 }
@@ -145,7 +145,7 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 	for {
 		response, err := client.Hosts.QueryDevicesByFilterScroll(&hosts.QueryDevicesByFilterScrollParams{
-			Context: context.Background(),
+			Context: ctx,
 			Limit:   &limit,
 			Offset:  &offset,
 			Filter:  &filter,
@@ -199,7 +199,7 @@ func getCrowdStrikeHost(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 	response, err := client.Hosts.GetDeviceDetails(&hosts.GetDeviceDetailsParams{
 		Ids:     []string{deviceId},
-		Context: context.Background(),
+		Context: ctx,
 	})
 
 	if err != nil {
