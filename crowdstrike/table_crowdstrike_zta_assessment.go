@@ -32,7 +32,7 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 			{Name: "event_platform", Description: "TODO", Type: proto.ColumnType_STRING},
 			{Name: "modified_time", Description: "TODO", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				breach := td.HydrateItem.(ztaAssesmentStruct)
-				return transformDate(ctx, *breach.ModifiedTime)
+				return transformStrFmtDateTime(ctx, *breach.ModifiedTime)
 			})},
 			{Name: "product_type_desc", Description: "TODO", Type: proto.ColumnType_STRING},
 			{Name: "sensor_file_status", Description: "TODO", Type: proto.ColumnType_STRING},
