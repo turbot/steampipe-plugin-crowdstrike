@@ -20,6 +20,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"crowdstrike_zta_assessment":  tableCrowdStrikeZtaAssessment(ctx),
 			"crowdstrike_zta_compliance":  tableCrowdStrikeZtaCompliance(ctx),
 			"crowdstrike_intel_indicator": tableCrowdStrikeIntelIndicator(ctx),
+			"crowdstrike_detect":          tableCrowdStrikeDetects(ctx),
 		},
 	}
 
