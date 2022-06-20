@@ -52,9 +52,8 @@ func getCrowdStrikeClient(ctx context.Context, d *plugin.QueryData) (*client.Cro
 	client, err := falcon.NewClient(&falcon.ApiConfig{
 		ClientId:     clientId,
 		ClientSecret: clientSecret,
-		//MemberCID:    memberCID,
-		Cloud:   falcon.Cloud(clientCloud),
-		Context: context.Background(),
+		Cloud:        falcon.Cloud(clientCloud),
+		Context:      context.Background(),
 	})
 
 	if err != nil {
