@@ -2,8 +2,12 @@ package crowdstrike
 
 import (
 	"context"
+	"errors"
 
+	"github.com/crowdstrike/gofalcon/falcon"
+	"github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/crowdstrike/gofalcon/falcon/client/hosts"
+	"github.com/crowdstrike/gofalcon/falcon/models"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
@@ -125,10 +129,6 @@ func tableCrowdStrikeHost(_ context.Context) *plugin.Table {
 	}
 }
 
-type hostStruct struct {
-	DeviceId string
-}
-
 //// LIST FUNCTION
 
 func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
@@ -157,13 +157,11 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 		hostDeviceIds := response.Payload.Resources
 		if len(hostDeviceIds) == 0 {
-			break
+			return nil, nil
 		}
-
-		for _, deviceId := range hostDeviceIds {
-			d.StreamListItem(ctx, hostStruct{
-				DeviceId: deviceId,
-			})
+		devices, err := getDeviceByIdBatch(ctx, client, hostDeviceIds)
+		for _, device := range devices {
+			d.StreamListItem(ctx, device)
 			if d.QueryStatus.RowsRemaining(ctx) < 1 {
 				return nil, nil
 			}
@@ -188,24 +186,24 @@ func getCrowdStrikeHost(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 		return nil, err
 	}
 
-	var deviceId string
+	deviceId := d.KeyColumnQuals["device_id"].GetStringValue()
 
-	if h.Item != nil {
-		result := h.Item.(hostStruct)
-		deviceId = result.DeviceId
-	} else {
-		deviceId = d.KeyColumnQuals["device_id"].GetStringValue()
-	}
+	return getDeviceByIdBatch(ctx, client, []string{deviceId})
+}
 
+func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DomainDeviceSwagger, error) {
 	response, err := client.Hosts.GetDeviceDetails(&hosts.GetDeviceDetailsParams{
-		Ids:     []string{deviceId},
+		Ids:     ids,
 		Context: ctx,
 	})
 
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.GetCrowdStrikeHost", "get_device_error", err)
+		return nil, errors.New(falcon.ErrorExplain(err))
+	}
+	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		return nil, err
 	}
 
-	return response.Payload.Resources[0], nil
+	return response.Payload.Resources, err
 }

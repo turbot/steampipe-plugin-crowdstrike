@@ -17,9 +17,9 @@ func tableCrowdStrikeZtaCompliance(_ context.Context) *plugin.Table {
 			Hydrate: listCrowdStrikeZtaCompliance,
 		},
 		Columns: []*plugin.Column{
-			{Name: "cid", Description: "TODO", Type: proto.ColumnType_STRING},
+			{Name: "cid", Description: "The Customer ID.", Type: proto.ColumnType_STRING},
 			{Name: "average_overall_score", Description: "TODO", Type: proto.ColumnType_DOUBLE},
-			{Name: "num_aids", Description: "TODO", Type: proto.ColumnType_INT},
+			{Name: "num_aids", Description: "Number of ZeroTrust assessments", Type: proto.ColumnType_INT},
 			{Name: "platforms", Description: "TODO", Type: proto.ColumnType_JSON},
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Cid")},

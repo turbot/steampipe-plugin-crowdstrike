@@ -21,6 +21,23 @@ func tableCrowdStrikeDetects(_ context.Context) *plugin.Table {
 		Description: "Detections are events identified by Falcon sensors on the hosts in your environment.",
 		List: &plugin.ListConfig{
 			Hydrate: listCrowdStrikeDetects,
+			KeyColumns: []*plugin.KeyColumn{
+				{
+					Name:      "created_timestamp",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+				{
+					Name:      "first_behavior",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+				{
+					Name:      "last_behavior",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+			},
 		},
 		Columns: []*plugin.Column{
 			{Name: "adversary_ids", Description: "If behaviors or indicators in a detection are attributed to an adversary that is tracked by CrowdStrike Falcon Intelligence, those adversaries will have an ID associated with them. These IDs are found in a detection's metadata which can be viewed using the Detection Details API.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeDetect, Transform: transform.FromJSONTag()},

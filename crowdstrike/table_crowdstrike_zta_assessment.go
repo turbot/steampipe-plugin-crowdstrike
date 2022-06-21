@@ -2,7 +2,9 @@ package crowdstrike
 
 import (
 	"context"
+	"errors"
 
+	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/zero_trust_assessment"
 	"github.com/crowdstrike/gofalcon/falcon/models"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
@@ -25,10 +27,10 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 		},
 		Columns: []*plugin.Column{
 			{Name: "device_id", Description: "Host device ID.", Type: proto.ColumnType_STRING},
-			{Name: "cid", Description: "TODO", Type: proto.ColumnType_STRING},
+			{Name: "cid", Description: "The Customer ID.", Type: proto.ColumnType_STRING},
 			{Name: "aid", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "assessment", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "assessment_items", Description: "TODO", Type: proto.ColumnType_JSON},
+			{Name: "assessment", Description: "The Assessment object", Type: proto.ColumnType_JSON},
+			{Name: "assessment_items", Description: "Assessment items", Type: proto.ColumnType_JSON},
 			{Name: "event_platform", Description: "TODO", Type: proto.ColumnType_STRING},
 			{Name: "modified_time", Description: "TODO", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				breach := td.HydrateItem.(ztaAssesmentStruct)
@@ -47,19 +49,16 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	client, err := getCrowdStrikeClient(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeZtaAssesment", "connection_error", err)
+		plugin.Logger(ctx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "connection_error", err)
 		return nil, err
 	}
 
 	var deviceId string
 
 	if h.Item != nil {
-		plugin.Logger(ctx).Trace("h.Item is not nil")
-		result := h.Item.(hostStruct)
-		deviceId = result.DeviceId
-		plugin.Logger(ctx).Trace("deviceID is", deviceId)
+		result := h.Item.(*models.DomainDeviceSwagger)
+		deviceId = *result.DeviceID
 	} else {
-		plugin.Logger(ctx).Trace("h.Item is nil")
 		deviceId = d.KeyColumnQuals["device_id"].GetStringValue()
 	}
 
@@ -70,7 +69,14 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 				WithIds([]string{deviceId}),
 		)
 		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeZtaAssesment", "query_error", err)
+			if _, ok := err.(*zero_trust_assessment.GetAssessmentV1NotFound); ok {
+				continue
+			}
+			plugin.Logger(ctx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "query_error", err)
+			return nil, errors.New(falcon.ErrorExplain(err))
+		}
+		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+			plugin.Logger(ctx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "assert_error", err)
 			return nil, err
 		}
 
