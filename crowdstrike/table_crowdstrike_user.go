@@ -2,7 +2,6 @@ package crowdstrike
 
 import (
 	"context"
-	"errors"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
@@ -45,7 +44,7 @@ func listCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 	)
 
 	if err != nil {
-		return nil, errors.New(falcon.ErrorExplain(err))
+		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		return nil, err
@@ -80,7 +79,7 @@ func getCrowdStrikeUserRoleId(ctx context.Context, d *plugin.QueryData, h *plugi
 	)
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.getUsersByIds", "RetrieveUserError", err)
-		return nil, errors.New(falcon.ErrorExplain(err))
+		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.getUsersByIds", "RetrieveUserError", err)
@@ -113,7 +112,7 @@ func getUsersByIds(ctx context.Context, client *client.CrowdStrikeAPISpecificati
 	)
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.getUsersByIds", "RetrieveUserError", err)
-		return nil, errors.New(falcon.ErrorExplain(err))
+		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.getUsersByIds", "RetrieveUserError", err)

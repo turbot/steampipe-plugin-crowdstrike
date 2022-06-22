@@ -2,7 +2,6 @@ package crowdstrike
 
 import (
 	"context"
-	"errors"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
@@ -174,7 +173,7 @@ func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecifica
 	)
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
-		return nil, errors.New(falcon.ErrorExplain(err))
+		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)

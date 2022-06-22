@@ -2,7 +2,6 @@ package crowdstrike
 
 import (
 	"context"
-	"errors"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
@@ -199,7 +198,7 @@ func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecif
 
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.GetCrowdStrikeHost", "get_device_error", err)
-		return nil, errors.New(falcon.ErrorExplain(err))
+		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		return nil, err

@@ -2,7 +2,6 @@ package crowdstrike
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -60,7 +59,7 @@ func listCrowdStrikeFirewallPolicies(ctx context.Context, d *plugin.QueryData, h
 		)
 
 		if err != nil {
-			return nil, errors.New(falcon.ErrorExplain(err))
+			return nil, err
 		}
 		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 			return nil, err
@@ -101,7 +100,7 @@ func getFirewallPolicyDetailsByIds(ctx context.Context, client *client.CrowdStri
 		firewall_policies.NewGetFirewallPoliciesParamsWithContext(ctx).WithIds(ids),
 	)
 	if err != nil {
-		return nil, errors.New(falcon.ErrorExplain(err))
+		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		return nil, err

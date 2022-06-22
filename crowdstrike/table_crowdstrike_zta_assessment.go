@@ -2,7 +2,7 @@ package crowdstrike
 
 import (
 	"context"
-	"errors"
+	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/zero_trust_assessment"
@@ -24,6 +24,12 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate:       listCrowdStrikeZtaAssesment,
 			ParentHydrate: listCrowdStrikeHosts,
+		},
+		HydrateConfig: []plugin.HydrateConfig{
+			{
+				Func:           listCrowdStrikeZtaAssesment,
+				MaxConcurrency: 1,
+			},
 		},
 		Columns: []*plugin.Column{
 			{Name: "device_id", Description: "Host device ID.", Type: proto.ColumnType_STRING},
@@ -68,12 +74,19 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 				WithContext(ctx).
 				WithIds([]string{deviceId}),
 		)
+		if response.XRateLimitRemaining == 0 {
+			time.Sleep(500 * time.Millisecond)
+			if ctx.Err() != nil {
+				return nil, ctx.Err()
+			}
+			continue
+		}
 		if err != nil {
 			if _, ok := err.(*zero_trust_assessment.GetAssessmentV1NotFound); ok {
 				continue
 			}
 			plugin.Logger(ctx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "query_error", err)
-			return nil, errors.New(falcon.ErrorExplain(err))
+			return nil, err
 		}
 		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 			plugin.Logger(ctx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "assert_error", err)

@@ -2,7 +2,6 @@ package crowdstrike
 
 import (
 	"context"
-	"errors"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/user_management"
@@ -49,7 +48,7 @@ func listCrowdStrikeUserRole(ctx context.Context, d *plugin.QueryData, h *plugin
 	)
 
 	if err != nil {
-		return nil, errors.New(falcon.ErrorExplain(err))
+		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		return nil, err
