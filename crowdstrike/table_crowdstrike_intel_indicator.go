@@ -2,9 +2,11 @@ package crowdstrike
 
 import (
 	"context"
+	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/intel"
+	"github.com/sethvargo/go-retry"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
@@ -54,31 +56,43 @@ func listCrowdStrikeIntelIndicator(ctx context.Context, d *plugin.QueryData, h *
 	limit := int64(500)
 
 	for response := (*intel.QueryIntelIndicatorEntitiesOK)(nil); response.HasNextPage(); {
-		response, err = client.Intel.QueryIntelIndicatorEntities(&intel.QueryIntelIndicatorEntitiesParams{
-			Context: context.Background(),
-			Filter:  nil,
-			Sort:    nil,
-			Limit:   &limit,
-		},
-			response.Paginate(),
-		)
-		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeIntelIndicator", "query_error", err)
-			return nil, err
-		}
-		if response == nil || response.Payload == nil {
-			break
-		}
-		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-			return nil, err
-		}
-		indicators := response.Payload.Resources
-		for _, indicator := range indicators {
-			d.StreamListItem(ctx, indicator)
-			if d.QueryStatus.RowsRemaining(ctx) < 1 {
-				return nil, nil
+
+		err := retry.Constant(ctx, 500*time.Millisecond, func(ctx context.Context) error {
+			response, err = client.Intel.QueryIntelIndicatorEntities(&intel.QueryIntelIndicatorEntitiesParams{
+				Context: ctx,
+				Filter:  nil,
+				Sort:    nil,
+				Limit:   &limit,
+			},
+				response.Paginate(),
+			)
+			if response != nil && response.XRateLimitRemaining == 0 {
+				return retry.RetryableError(err)
 			}
+			if err != nil {
+				plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeIntelIndicator", "query_error", err)
+				return err
+			}
+			if err := falcon.AssertNoError(response.Payload.Errors); err != nil {
+				return err
+			}
+			if response == nil || response.Payload == nil {
+				return nil
+			}
+			indicators := response.Payload.Resources
+			for _, indicator := range indicators {
+				d.StreamListItem(ctx, indicator)
+				if d.QueryStatus.RowsRemaining(ctx) < 1 {
+					return nil
+				}
+			}
+			return nil
+		})
+
+		if err != nil {
+			return nil, err
 		}
+
 	}
 
 	return nil, nil

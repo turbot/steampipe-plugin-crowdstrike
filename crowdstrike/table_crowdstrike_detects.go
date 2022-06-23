@@ -2,11 +2,13 @@ package crowdstrike
 
 import (
 	"context"
+	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/crowdstrike/gofalcon/falcon/client/detects"
 	"github.com/crowdstrike/gofalcon/falcon/models"
+	"github.com/sethvargo/go-retry"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
@@ -89,10 +91,6 @@ func tableCrowdStrikeDetects(_ context.Context) *plugin.Table {
 	}
 }
 
-type detectStruct struct {
-	DetectId string
-}
-
 //// LIST FUNCTION
 
 func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
@@ -105,39 +103,51 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 	limit := int64(500)
 
 	for offset := int64(0); ; {
-		response, err := client.Detects.QueryDetects(&detects.QueryDetectsParams{
-			Filter:  nil,
-			Offset:  &offset,
-			Limit:   &limit,
-			Context: ctx,
-		})
-		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "query_error", err)
-			return nil, err
-		}
-		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "assert_error", err)
-			return nil, err
-		}
+		var response *detects.QueryDetectsOK
+		var err error
 
-		detectIdBatch := response.Payload.Resources
-		if len(detectIdBatch) == 0 {
-			break
-		}
+		err = retry.Constant(ctx, 500*time.Millisecond, func(ctx context.Context) error {
+			response, err = client.Detects.QueryDetects(&detects.QueryDetectsParams{
+				Filter:  nil,
+				Offset:  &offset,
+				Limit:   &limit,
+				Context: ctx,
+			})
 
-		detects, err := getDetectsByIds(ctx, client, detectIdBatch)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, detect := range detects {
-			d.StreamListItem(ctx, detect)
-			if d.QueryStatus.RowsRemaining(ctx) < 1 {
-				return nil, nil
+			if response != nil && response.XRateLimitRemaining == 0 {
+				return retry.RetryableError(err)
 			}
+
+			if err != nil {
+				plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "query_error", err)
+				return err
+			}
+			if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+				plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "assert_error", err)
+				return err
+			}
+
+			detectIdBatch := response.Payload.Resources
+			detects, err := getDetectsByIds(ctx, client, detectIdBatch)
+			if err != nil {
+				return err
+			}
+
+			for _, detect := range detects {
+				d.StreamListItem(ctx, detect)
+				if d.QueryStatus.RowsRemaining(ctx) < 1 {
+					return nil
+				}
+			}
+			offset = offset + int64(len(detectIdBatch))
+
+			return nil
+		})
+
+		if err != nil {
+			return nil, err
 		}
 
-		offset = offset + int64(len(detectIdBatch))
 		if offset >= *response.Payload.Meta.Pagination.Total {
 			break
 		}
@@ -165,20 +175,29 @@ func getCrowdStrikeDetect(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	return detect[0], nil
 }
 
-func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DomainAPIDetectionDocument, error) {
-	response, err := client.Detects.GetDetectSummaries(
-		detects.NewGetDetectSummariesParamsWithContext(ctx).WithBody(&models.MsaIdsRequest{
-			Ids: ids,
-		}),
-	)
-	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
-		return nil, err
-	}
-	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
-		return nil, err
-	}
+func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) (ret []*models.DomainAPIDetectionDocument, retErr error) {
+	retErr = retry.Constant(ctx, 500*time.Millisecond, func(ctx context.Context) error {
+		response, err := client.Detects.GetDetectSummaries(
+			detects.NewGetDetectSummariesParamsWithContext(ctx).WithBody(&models.MsaIdsRequest{
+				Ids: ids,
+			}),
+		)
+		if response != nil && response.XRateLimitRemaining == 0 {
+			return retry.RetryableError(err)
+		}
+		if err != nil {
+			plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
+			return err
+		}
+		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+			plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
+			return err
+		}
 
-	return response.Payload.Resources, nil
+		ret = response.Payload.Resources
+
+		return nil
+	})
+
+	return
 }

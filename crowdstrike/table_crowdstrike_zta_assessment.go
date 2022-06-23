@@ -74,7 +74,7 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 					WithContext(retryCtx).
 					WithIds([]string{deviceId}),
 			)
-			if response.XRateLimitRemaining == 0 {
+			if response != nil && response.XRateLimitRemaining == 0 {
 				return retry.RetryableError(err)
 			}
 			if err != nil {
