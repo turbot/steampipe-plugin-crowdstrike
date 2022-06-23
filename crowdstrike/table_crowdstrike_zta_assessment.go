@@ -7,6 +7,7 @@ import (
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/zero_trust_assessment"
 	"github.com/crowdstrike/gofalcon/falcon/models"
+	"github.com/sethvargo/go-retry"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
@@ -25,12 +26,6 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 			Hydrate:       listCrowdStrikeZtaAssesment,
 			ParentHydrate: listCrowdStrikeHosts,
 		},
-		HydrateConfig: []plugin.HydrateConfig{
-			{
-				Func:           listCrowdStrikeZtaAssesment,
-				MaxConcurrency: 1,
-			},
-		},
 		Columns: []*plugin.Column{
 			{Name: "device_id", Description: "Host device ID.", Type: proto.ColumnType_STRING},
 			{Name: "cid", Description: "The Customer ID.", Type: proto.ColumnType_STRING},
@@ -39,8 +34,8 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 			{Name: "assessment_items", Description: "Assessment items", Type: proto.ColumnType_JSON},
 			{Name: "event_platform", Description: "TODO", Type: proto.ColumnType_STRING},
 			{Name: "modified_time", Description: "TODO", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				breach := td.HydrateItem.(ztaAssesmentStruct)
-				return transformStrFmtDateTime(ctx, *breach.ModifiedTime)
+				assessment := td.HydrateItem.(ztaAssesmentStruct)
+				return transformStrFmtDateTime(ctx, *assessment.ModifiedTime)
 			})},
 			{Name: "product_type_desc", Description: "TODO", Type: proto.ColumnType_STRING},
 			{Name: "sensor_file_status", Description: "TODO", Type: proto.ColumnType_STRING},
@@ -69,29 +64,32 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 	}
 
 	for {
-		response, err := client.ZeroTrustAssessment.GetAssessmentV1(
-			zero_trust_assessment.NewGetAssessmentV1Params().
-				WithContext(ctx).
-				WithIds([]string{deviceId}),
-		)
-		if response.XRateLimitRemaining == 0 {
-			time.Sleep(500 * time.Millisecond)
-			if ctx.Err() != nil {
-				return nil, ctx.Err()
+		var response *zero_trust_assessment.GetAssessmentV1OK
+		err = retry.Constant(ctx, 500*time.Millisecond, func(retryCtx context.Context) error {
+			if retryCtx.Err() != nil {
+				return retryCtx.Err()
 			}
-			continue
-		}
-		if err != nil {
-			if _, ok := err.(*zero_trust_assessment.GetAssessmentV1NotFound); ok {
-				continue
+			response, err := client.ZeroTrustAssessment.GetAssessmentV1(
+				zero_trust_assessment.NewGetAssessmentV1Params().
+					WithContext(retryCtx).
+					WithIds([]string{deviceId}),
+			)
+			if response.XRateLimitRemaining == 0 {
+				return retry.RetryableError(err)
 			}
-			plugin.Logger(ctx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "query_error", err)
-			return nil, err
-		}
-		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "assert_error", err)
-			return nil, err
-		}
+			if err != nil {
+				if _, ok := err.(*zero_trust_assessment.GetAssessmentV1NotFound); ok {
+					return retry.RetryableError(err)
+				}
+				plugin.Logger(retryCtx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "query_error", err)
+				return err
+			}
+			if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+				plugin.Logger(retryCtx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "assert_error", err)
+				return err
+			}
+			return nil
+		})
 
 		domainSignalProps := response.Payload.Resources
 		if len(domainSignalProps) == 0 {

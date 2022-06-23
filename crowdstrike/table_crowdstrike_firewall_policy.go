@@ -3,7 +3,6 @@ package crowdstrike
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
@@ -43,9 +42,9 @@ func listCrowdStrikeFirewallPolicies(ctx context.Context, d *plugin.QueryData, h
 	}
 
 	offset := (*int64)(nil)
-	filter := buildFirewallPoliciesFilter(ctx, d)
-	if len(filter) == 0 {
-		filter = "*"
+	filter, err := QualToFQL(ctx, d, "*")
+	if err != nil {
+		return nil, err
 	}
 
 	for {
@@ -54,7 +53,7 @@ func listCrowdStrikeFirewallPolicies(ctx context.Context, d *plugin.QueryData, h
 				Context: ctx,
 				Offset:  offset,
 				Limit:   &limit,
-				Filter:  &filter,
+				Filter:  filter,
 			},
 		)
 
@@ -106,12 +105,4 @@ func getFirewallPolicyDetailsByIds(ctx context.Context, client *client.CrowdStri
 		return nil, err
 	}
 	return response.Payload.Resources, nil
-}
-
-func buildFirewallPoliciesFilter(ctx context.Context, d *plugin.QueryData) string {
-	b := new(strings.Builder)
-
-	// build the FQL filter based on the passed in quals
-
-	return b.String()
 }
