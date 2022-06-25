@@ -2,13 +2,18 @@ package crowdstrike
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
+
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 )
+
+var ErrRateLimitExceeded error = errors.New("rate limit exceeded")
+var ErrResourceNotFound error = errors.New("resource not found")
 
 func getCrowdStrikeClient(ctx context.Context, d *plugin.QueryData) (*client.CrowdStrikeAPISpecification, error) {
 	// Try to load client from cache

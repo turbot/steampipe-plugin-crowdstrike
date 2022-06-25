@@ -11,29 +11,30 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/quals"
 )
 
-func QualToFQL(ctx context.Context, d *plugin.QueryData, zeroValue string) (*string, error) {
+func QualToFQL(ctx context.Context, d *plugin.QueryData, zeroValue ...string) (string, error) {
 	plugin.Logger(ctx).Trace("generating filter from quals")
 	filters := []string{}
 	for _, qualifiers := range d.Quals {
 		// check if the context was cancelled
 		if ctx.Err() != nil {
-			return nil, ctx.Err()
+			return "", ctx.Err()
 		}
 		for _, qual := range qualifiers.Quals {
-			if property, operator, value, err := contructFQLLine(qual); err != nil {
-				filters = append(filters, fmt.Sprintf("%s:%s%s", property, operator, value))
-			}
+			property, operator, value := contructFQLLine(qual)
+			filters = append(filters, fmt.Sprintf("%s:%s%s", property, operator, value))
 		}
 	}
-	constructedFilter := strings.Join(filters, "\n")
-	if len(constructedFilter) == 0 {
-		constructedFilter = zeroValue
+	if len(filters) == 0 {
+		filters = append([]string{}, zeroValue...)
 	}
-	plugin.Logger(ctx).Trace("Generated filter:", constructedFilter)
-	return &constructedFilter, nil
+
+	constructedFilter := strings.Join(filters, "+")
+
+	plugin.Logger(ctx).Trace("Generated filter", constructedFilter)
+	return constructedFilter, nil
 }
 
-func contructFQLLine(qual *quals.Qual) (property string, operator string, value string, _ error) {
+func contructFQLLine(qual *quals.Qual) (property string, operator string, value string) {
 	property = qual.Column
 	switch qual.Operator {
 	case ">":

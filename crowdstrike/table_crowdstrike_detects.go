@@ -115,7 +115,7 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 			})
 
 			if response != nil && response.XRateLimitRemaining == 0 {
-				return retry.RetryableError(err)
+				return retry.RetryableError(ErrRateLimitExceeded)
 			}
 
 			if err != nil {
@@ -183,7 +183,7 @@ func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecifica
 			}),
 		)
 		if response != nil && response.XRateLimitRemaining == 0 {
-			return retry.RetryableError(err)
+			return retry.RetryableError(ErrRateLimitExceeded)
 		}
 		if err != nil {
 			plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)

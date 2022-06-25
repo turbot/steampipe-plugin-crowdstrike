@@ -53,7 +53,7 @@ func listCrowdStrikeFirewallPolicies(ctx context.Context, d *plugin.QueryData, h
 				Context: ctx,
 				Offset:  offset,
 				Limit:   &limit,
-				Filter:  filter,
+				Filter:  &filter,
 			},
 		)
 

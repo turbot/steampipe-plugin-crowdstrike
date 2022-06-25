@@ -157,7 +157,7 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 			})
 
 			if response != nil && response.XRateLimitRemaining == 0 {
-				return retry.RetryableError(err)
+				return retry.RetryableError(ErrRateLimitExceeded)
 			}
 
 			if err != nil {
@@ -222,7 +222,7 @@ func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecif
 			Context: ctx,
 		})
 		if response != nil && response.XRateLimitRemaining == 0 {
-			return retry.RetryableError(err)
+			return retry.RetryableError(ErrRateLimitExceeded)
 		}
 		if err != nil {
 			plugin.Logger(ctx).Error("crowdstrike_host.GetCrowdStrikeHost", "get_device_error", err)

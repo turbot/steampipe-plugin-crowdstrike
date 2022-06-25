@@ -67,7 +67,7 @@ func listCrowdStrikeIntelIndicator(ctx context.Context, d *plugin.QueryData, h *
 				response.Paginate(),
 			)
 			if response != nil && response.XRateLimitRemaining == 0 {
-				return retry.RetryableError(err)
+				return retry.RetryableError(ErrRateLimitExceeded)
 			}
 			if err != nil {
 				plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeIntelIndicator", "query_error", err)

@@ -2,6 +2,7 @@ package crowdstrike
 
 import (
 	"context"
+	"runtime/debug"
 	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
@@ -55,6 +56,16 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 	}
 
 	var deviceId string
+	defer func() {
+		r := recover()
+		if r != nil {
+			plugin.Logger(ctx).Error("panic recover for device id", deviceId)
+			plugin.Logger(ctx).Error("recovered error for device ", deviceId, r)
+			plugin.Logger(ctx).Error("stack for device ", deviceId, string(debug.Stack()))
+
+			debug.Stack()
+		}
+	}()
 
 	if h.Item != nil {
 		result := h.Item.(*models.DomainDeviceSwagger)
@@ -63,33 +74,42 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 		deviceId = d.KeyColumnQuals["device_id"].GetStringValue()
 	}
 
+	plugin.Logger(ctx).Trace("DEVICE_ID", deviceId)
+
 	for {
 		var response *zero_trust_assessment.GetAssessmentV1OK
-		err = retry.Constant(ctx, 500*time.Millisecond, func(retryCtx context.Context) error {
+		err = retry.Constant(ctx, 500*time.Millisecond, func(retryCtx context.Context) (e error) {
 			if retryCtx.Err() != nil {
 				return retryCtx.Err()
 			}
-			response, err := client.ZeroTrustAssessment.GetAssessmentV1(
+			response, e = client.ZeroTrustAssessment.GetAssessmentV1(
 				zero_trust_assessment.NewGetAssessmentV1Params().
 					WithContext(retryCtx).
 					WithIds([]string{deviceId}),
 			)
 			if response != nil && response.XRateLimitRemaining == 0 {
-				return retry.RetryableError(err)
+				return retry.RetryableError(ErrRateLimitExceeded)
 			}
-			if err != nil {
-				if _, ok := err.(*zero_trust_assessment.GetAssessmentV1NotFound); ok {
-					return retry.RetryableError(err)
+			if e != nil {
+				if _, ok := e.(*zero_trust_assessment.GetAssessmentV1NotFound); ok {
+					return ErrResourceNotFound
 				}
-				plugin.Logger(retryCtx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "query_error", err)
-				return err
+				plugin.Logger(retryCtx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "query_error", e)
+				return e
 			}
-			if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-				plugin.Logger(retryCtx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "assert_error", err)
-				return err
+			if e = falcon.AssertNoError(response.Payload.Errors); e != nil {
+				plugin.Logger(retryCtx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "assert_error", e)
+				return e
 			}
 			return nil
 		})
+
+		if err != nil {
+			if err == ErrResourceNotFound {
+				break
+			}
+			return nil, err
+		}
 
 		domainSignalProps := response.Payload.Resources
 		if len(domainSignalProps) == 0 {
