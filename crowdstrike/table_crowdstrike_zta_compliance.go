@@ -34,26 +34,27 @@ func listCrowdStrikeZtaCompliance(ctx context.Context, d *plugin.QueryData, h *p
 		return nil, err
 	}
 
-	for {
-		response, err := client.ZeroTrustAssessment.GetComplianceV1(
-			zero_trust_assessment.NewGetComplianceV1Params().
-				WithContext(ctx).WithDefaults(),
-		)
-		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeZtaCompliance", "query_error", err)
-			return nil, err
-		}
+	if err := getLimiter(ctx, d).Wait(ctx); err != nil {
+		return nil, err
+	}
+	response, err := client.ZeroTrustAssessment.GetComplianceV1(
+		zero_trust_assessment.NewGetComplianceV1Params().
+			WithContext(ctx).WithDefaults(),
+	)
+	if err != nil {
+		plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeZtaCompliance", "query_error", err)
+		return nil, err
+	}
 
-		domainSignalProps := response.Payload.Resources
-		if len(domainSignalProps) == 0 {
-			break
-		}
+	domainSignalProps := response.Payload.Resources
+	if len(domainSignalProps) == 0 {
+		return nil, nil
+	}
 
-		for _, dsp := range domainSignalProps {
-			d.StreamListItem(ctx, dsp)
-			if d.QueryStatus.RowsRemaining(ctx) < 1 {
-				return nil, nil
-			}
+	for _, dsp := range domainSignalProps {
+		d.StreamListItem(ctx, dsp)
+		if d.QueryStatus.RowsRemaining(ctx) < 1 {
+			return nil, nil
 		}
 	}
 

@@ -4,7 +4,10 @@ go 1.18
 
 require (
 	github.com/crowdstrike/gofalcon v0.2.21
+	github.com/go-openapi/strfmt v0.21.2
+	github.com/sethvargo/go-retry v0.1.0
 	github.com/turbot/steampipe-plugin-sdk/v3 v3.2.0
+	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
 )
 
 require (
@@ -29,7 +32,6 @@ require (
 	github.com/go-openapi/loads v0.21.1 // indirect
 	github.com/go-openapi/runtime v0.24.0 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
-	github.com/go-openapi/strfmt v0.21.2 // indirect
 	github.com/go-openapi/swag v0.21.1 // indirect
 	github.com/go-openapi/validate v0.21.0 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
@@ -54,7 +56,6 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/sethvargo/go-retry v0.1.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stevenle/topsort v0.0.0-20130922064739-8130c1d7596b // indirect
 	github.com/tkrajina/go-reflector v0.5.4 // indirect

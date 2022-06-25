@@ -5,15 +5,30 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
+	"golang.org/x/time/rate"
 
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 )
 
 var ErrRateLimitExceeded error = errors.New("rate limit exceeded")
 var ErrResourceNotFound error = errors.New("resource not found")
+
+func getLimiter(ctx context.Context, d *plugin.QueryData) *rate.Limiter {
+	if cachedData, ok := d.ConnectionManager.Cache.Get("limiter"); ok {
+		return cachedData.(*rate.Limiter)
+	}
+
+	limiter := rate.NewLimiter(rate.Every(500*time.Millisecond), 500)
+
+	// save client in cache
+	d.ConnectionManager.Cache.Set("limiter", limiter)
+
+	return limiter
+}
 
 func getCrowdStrikeClient(ctx context.Context, d *plugin.QueryData) (*client.CrowdStrikeAPISpecification, error) {
 	// Try to load client from cache
