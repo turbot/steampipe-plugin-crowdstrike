@@ -2,16 +2,15 @@ package crowdstrike
 
 import (
 	"context"
-	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/crowdstrike/gofalcon/falcon/client/detects"
 	"github.com/crowdstrike/gofalcon/falcon/models"
-	"github.com/sethvargo/go-retry"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
+	"golang.org/x/time/rate"
 )
 
 //// TABLE DEFINITION
@@ -38,55 +37,75 @@ func tableCrowdStrikeDetects(_ context.Context) *plugin.Table {
 					Require:   plugin.Optional,
 					Operators: []string{">", ">=", "=", "<", "<="},
 				},
+				{
+					Name:      "status",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
+				{
+					Name:      "detection_id",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
+				{
+					Name:      "max_severity",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+				{
+					Name:      "max_confidence",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
 			},
 		},
 		Columns: []*plugin.Column{
-			{Name: "adversary_ids", Description: "If behaviors or indicators in a detection are attributed to an adversary that is tracked by CrowdStrike Falcon Intelligence, those adversaries will have an ID associated with them. These IDs are found in a detection's metadata which can be viewed using the Detection Details API.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeDetect, Transform: transform.FromJSONTag()},
-			{Name: "assigned_to_name", Description: "The human-readable name of the user to whom the detection is currently assigned.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeDetect},
+			{Name: "adversary_ids", Description: "If behaviors or indicators in a detection are attributed to an adversary that is tracked by CrowdStrike Falcon Intelligence, those adversaries will have an ID associated with them. These IDs are found in a detection's metadata which can be viewed using the Detection Details API.", Type: proto.ColumnType_JSON, Transform: transform.FromJSONTag()},
+			{Name: "assigned_to_name", Description: "The human-readable name of the user to whom the detection is currently assigned.", Type: proto.ColumnType_STRING},
 
-			{Name: "assigned_to_uid", Description: "TODO", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeDetect, Transform: transform.FromJSONTag()},
-			{Name: "behaviors", Description: "TODO", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeDetect},
-			{Name: "behaviors_processed", Description: "TODO", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeDetect},
+			{Name: "assigned_to_uid", Description: "TODO", Type: proto.ColumnType_STRING, Transform: transform.FromJSONTag()},
+			{Name: "behaviors", Description: "TODO", Type: proto.ColumnType_JSON},
+			{Name: "behaviors_processed", Description: "TODO", Type: proto.ColumnType_JSON},
 
-			{Name: "cid", Description: "Your organization's customer ID (CID).", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeDetect},
+			{Name: "cid", Description: "Your organization's customer ID (CID).", Type: proto.ColumnType_STRING},
 
-			{Name: "created_timestamp", Description: "TODO", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeDetect, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+			{Name: "created_timestamp", Description: "TODO", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				breach := td.HydrateItem.(*models.DomainAPIDetectionDocument)
 				return transformStrFmtDateTime(ctx, *breach.CreatedTimestamp)
 			})},
 
-			{Name: "detection_id", Description: "The ID of the detection. This ID can be used in conjunction with other APIs, such as the Detection Details API, or the Resolve Detection API.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeDetect},
+			{Name: "detection_id", Description: "The ID of the detection. This ID can be used in conjunction with other APIs, such as the Detection Details API, or the Resolve Detection API.", Type: proto.ColumnType_STRING},
 
-			{Name: "device", Description: "TODO", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeDetect},
-			{Name: "email_sent", Description: "TODO", Type: proto.ColumnType_BOOL, Hydrate: getCrowdStrikeDetect},
+			{Name: "device", Description: "TODO", Type: proto.ColumnType_JSON},
+			{Name: "email_sent", Description: "TODO", Type: proto.ColumnType_BOOL},
 
-			{Name: "first_behavior", Description: "When a detection has more than one associated behavior, this field captures the timestamp of the first behavior.", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeDetect, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+			{Name: "first_behavior", Description: "When a detection has more than one associated behavior, this field captures the timestamp of the first behavior.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				breach := td.HydrateItem.(*models.DomainAPIDetectionDocument)
 				return transformStrFmtDateTime(ctx, *breach.FirstBehavior)
 			})},
 
-			{Name: "hostinfo", Description: "TODO", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeDetect},
+			{Name: "hostinfo", Description: "TODO", Type: proto.ColumnType_JSON},
 
-			{Name: "last_behavior", Description: "	When a detection has more than one associated behavior, this field captures the timestamp of the last behavior.", Type: proto.ColumnType_TIMESTAMP, Hydrate: getCrowdStrikeDetect, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+			{Name: "last_behavior", Description: "	When a detection has more than one associated behavior, this field captures the timestamp of the last behavior.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				breach := td.HydrateItem.(*models.DomainAPIDetectionDocument)
 				return transformStrFmtDateTime(ctx, *breach.LastBehavior)
 			})},
-			{Name: "max_confidence", Description: "When a detection has more than one associated behavior with varying confidence levels, this field captures the highest confidence value of all behaviors. Value can be any integer between 1-100.", Type: proto.ColumnType_INT, Hydrate: getCrowdStrikeDetect},
-			{Name: "max_severity", Description: "When a detection has more than one associated behavior with varying severity levels, this field captures the highest severity value of all behaviors. Value can be any integer between 1-100.", Type: proto.ColumnType_INT, Hydrate: getCrowdStrikeDetect},
-			{Name: "max_severity_displayname", Description: "The name used in the UI to determine the severity of the detection. Values include Critical, High, Medium, and Low", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeDetect},
+			{Name: "max_confidence", Description: "When a detection has more than one associated behavior with varying confidence levels, this field captures the highest confidence value of all behaviors. Value can be any integer between 1-100.", Type: proto.ColumnType_INT},
+			{Name: "max_severity", Description: "When a detection has more than one associated behavior with varying severity levels, this field captures the highest severity value of all behaviors. Value can be any integer between 1-100.", Type: proto.ColumnType_INT},
+			{Name: "max_severity_displayname", Description: "The name used in the UI to determine the severity of the detection. Values include Critical, High, Medium, and Low", Type: proto.ColumnType_STRING},
 
-			{Name: "overwatch_notes", Description: "TODO", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeDetect},
-			{Name: "quarantined_files", Description: "TODO", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeDetect},
+			{Name: "overwatch_notes", Description: "TODO", Type: proto.ColumnType_STRING},
+			{Name: "quarantined_files", Description: "TODO", Type: proto.ColumnType_JSON},
 
-			{Name: "seconds_to_resolved", Description: "Time that it took to move a detection from newand one of the resolved states (true_positive, false_positive, and ignored).", Type: proto.ColumnType_INT, Hydrate: getCrowdStrikeDetect},
-			{Name: "seconds_to_triaged", Description: "Time that it took to move a detection from new to in_progress.", Type: proto.ColumnType_INT, Hydrate: getCrowdStrikeDetect},
+			{Name: "seconds_to_resolved", Description: "Time that it took to move a detection from newand one of the resolved states (true_positive, false_positive, and ignored).", Type: proto.ColumnType_INT},
+			{Name: "seconds_to_triaged", Description: "Time that it took to move a detection from new to in_progress.", Type: proto.ColumnType_INT},
 
-			{Name: "show_in_ui", Description: "TODO", Type: proto.ColumnType_BOOL, Hydrate: getCrowdStrikeDetect},
+			{Name: "show_in_ui", Description: "TODO", Type: proto.ColumnType_BOOL},
 
-			{Name: "status", Description: "The current status of the detection. Values include new, in_progress, true_positive, false_positive, and ignored.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeDetect},
+			{Name: "status", Description: "The current status of the detection. Values include new, in_progress, true_positive, false_positive, and ignored.", Type: proto.ColumnType_STRING},
 
 			// Steampipe standard columns
-			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Hydrate: getCrowdStrikeDetect, Transform: transform.FromField("AssignedToName")},
+			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("AssignedToName")},
 		},
 	}
 }
@@ -94,6 +113,7 @@ func tableCrowdStrikeDetects(_ context.Context) *plugin.Table {
 //// LIST FUNCTION
 
 func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+
 	client, err := getCrowdStrikeClient(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "connection_error", err)
@@ -101,48 +121,51 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 	}
 
 	limit := int64(500)
+	filter, err := QualToFQL(ctx, d, QualToFqlNoKeyignore, "")
+	if err != nil {
+		return nil, err
+	}
 
 	for offset := int64(0); ; {
 		var response *detects.QueryDetectsOK
 		var err error
 
-		err = retry.Constant(ctx, 500*time.Millisecond, func(ctx context.Context) error {
-			response, err = client.Detects.QueryDetects(&detects.QueryDetectsParams{
-				Filter:  nil,
-				Offset:  &offset,
-				Limit:   &limit,
-				Context: ctx,
-			})
+		f := &filter
+		if len(filter) == 0 {
+			f = nil
+		}
 
-			if response != nil && response.XRateLimitRemaining == 0 {
-				return retry.RetryableError(ErrRateLimitExceeded)
-			}
-
-			if err != nil {
-				plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "query_error", err)
-				return err
-			}
-			if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-				plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "assert_error", err)
-				return err
-			}
-
-			detectIdBatch := response.Payload.Resources
-			detects, err := getDetectsByIds(ctx, client, detectIdBatch)
-			if err != nil {
-				return err
-			}
-
-			for _, detect := range detects {
-				d.StreamListItem(ctx, detect)
-				if d.QueryStatus.RowsRemaining(ctx) < 1 {
-					return nil
-				}
-			}
-			offset = offset + int64(len(detectIdBatch))
-
-			return nil
+		response, err = client.Detects.QueryDetects(&detects.QueryDetectsParams{
+			Filter:  f,
+			Offset:  &offset,
+			Limit:   &limit,
+			Context: ctx,
 		})
+
+		if err != nil {
+			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "query_error", err)
+			return nil, err
+		}
+		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "assert_error", err)
+			return nil, err
+		}
+
+		detectIdBatch := response.Payload.Resources
+		plugin.Logger(ctx).Trace("detect batch length", len(detectIdBatch))
+		detects, err := getDetectsByIds(ctx, client, getLimiter(ctx, d), detectIdBatch)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, detect := range detects {
+			d.StreamListItem(ctx, detect)
+			if d.QueryStatus.RowsRemaining(ctx) < 1 {
+				return nil, nil
+			}
+		}
+
+		offset = offset + int64(len(detectIdBatch))
 
 		if err != nil {
 			return nil, err
@@ -165,7 +188,7 @@ func getCrowdStrikeDetect(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 	detectId := d.KeyColumnQuals["detect_id"].GetStringValue()
 
-	detect, err := getDetectsByIds(ctx, client, []string{detectId})
+	detect, err := getDetectsByIds(ctx, client, getLimiter(ctx, d), []string{detectId})
 
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetect", "GetDetectSummaries error", err)
@@ -175,29 +198,29 @@ func getCrowdStrikeDetect(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	return detect[0], nil
 }
 
-func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) (ret []*models.DomainAPIDetectionDocument, retErr error) {
-	retErr = retry.Constant(ctx, 500*time.Millisecond, func(ctx context.Context) error {
-		response, err := client.Detects.GetDetectSummaries(
-			detects.NewGetDetectSummariesParamsWithContext(ctx).WithBody(&models.MsaIdsRequest{
-				Ids: ids,
-			}),
-		)
-		if response != nil && response.XRateLimitRemaining == 0 {
-			return retry.RetryableError(ErrRateLimitExceeded)
-		}
-		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
-			return err
-		}
-		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
-			return err
-		}
+func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, limiter *rate.Limiter, ids []string) ([]*models.DomainAPIDetectionDocument, error) {
+	if len(ids) == 0 {
+		return []*models.DomainAPIDetectionDocument{}, nil
+	}
 
-		ret = response.Payload.Resources
+	if err := limiter.Wait(ctx); err != nil {
+		return nil, err
+	}
 
-		return nil
-	})
+	response, err := client.Detects.GetDetectSummaries(
+		detects.NewGetDetectSummariesParamsWithContext(ctx).WithBody(&models.MsaIdsRequest{
+			Ids: ids,
+		}),
+	)
 
-	return
+	if err != nil {
+		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
+		return nil, err
+	}
+	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
+		return nil, err
+	}
+
+	return response.Payload.Resources, nil
 }
