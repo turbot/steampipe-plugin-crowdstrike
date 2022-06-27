@@ -4,17 +4,24 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
+	"github.com/turbot/go-kit/helpers"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/quals"
 )
 
-func QualToFQL(ctx context.Context, d *plugin.QueryData, zeroValue ...string) (string, error) {
+var QualToFqlNoKeyignore = []string{}
+
+const qualToFqlTimestampFormat = "2006-01-02"
+
+func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, zeroValue ...string) (string, error) {
 	plugin.Logger(ctx).Trace("generating filter from quals")
 	filters := []string{}
-	for _, qualifiers := range d.Quals {
+	for key, qualifiers := range d.Quals {
+		if helpers.StringSliceContains(ignoreKeys, key) {
+			continue
+		}
 		// check if the context was cancelled
 		if ctx.Err() != nil {
 			return "", ctx.Err()
@@ -64,7 +71,7 @@ func contructFQLLine(qual *quals.Qual) (property string, operator string, value 
 		value = fmt.Sprintf("'%s'", qual.Value.GetStringValue())
 	case *proto.QualValue_TimestampValue:
 		asUtcTime := qual.Value.GetTimestampValue().AsTime().UTC()
-		value = fmt.Sprintf("'%s'", asUtcTime.Format(time.RFC3339))
+		value = fmt.Sprintf("'%s'", asUtcTime.Format(qualToFqlTimestampFormat))
 	}
 
 	return

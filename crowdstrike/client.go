@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
@@ -22,7 +21,9 @@ func getLimiter(ctx context.Context, d *plugin.QueryData) *rate.Limiter {
 		return cachedData.(*rate.Limiter)
 	}
 
-	limiter := rate.NewLimiter(rate.Every(500*time.Millisecond), 500)
+	// as per https://developer.crowdstrike.com/crowdstrike/docs/oauth2-based-apis#rate-limiting
+	// request rate is limited to 100 tokens/second with a burst of 100 tokens
+	limiter := rate.NewLimiter(100, 100)
 
 	// save client in cache
 	d.ConnectionManager.Cache.Set("limiter", limiter)
