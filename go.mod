@@ -6,6 +6,7 @@ require (
 	github.com/crowdstrike/gofalcon v0.2.21
 	github.com/go-openapi/strfmt v0.21.2
 	github.com/sethvargo/go-retry v0.1.0
+	github.com/turbot/go-kit v0.3.0
 	github.com/turbot/steampipe-plugin-sdk/v3 v3.2.0
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
 )
@@ -59,7 +60,6 @@ require (
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stevenle/topsort v0.0.0-20130922064739-8130c1d7596b // indirect
 	github.com/tkrajina/go-reflector v0.5.4 // indirect
-	github.com/turbot/go-kit v0.3.0 // indirect
 	github.com/zclconf/go-cty v1.10.0 // indirect
 	go.mongodb.org/mongo-driver v1.8.3 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
