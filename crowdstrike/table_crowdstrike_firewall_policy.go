@@ -42,7 +42,7 @@ func listCrowdStrikeFirewallPolicies(ctx context.Context, d *plugin.QueryData, h
 	}
 
 	offset := (*int64)(nil)
-	filter, err := QualToFQL(ctx, d, "*")
+	filter, err := QualToFQL(ctx, d, QualToFqlNoKeyignore, "*")
 	if err != nil {
 		return nil, err
 	}
