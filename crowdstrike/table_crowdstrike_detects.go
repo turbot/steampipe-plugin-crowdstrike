@@ -127,15 +127,12 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 	}
 
 	for offset := int64(0); ; {
-		var response *detects.QueryDetectsOK
-		var err error
-
 		f := &filter
 		if len(filter) == 0 {
 			f = nil
 		}
 
-		response, err = client.Detects.QueryDetects(&detects.QueryDetectsParams{
+		response, err := client.Detects.QueryDetects(&detects.QueryDetectsParams{
 			Filter:  f,
 			Offset:  &offset,
 			Limit:   &limit,
