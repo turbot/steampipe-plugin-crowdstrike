@@ -34,7 +34,7 @@ func listCrowdStrikeZtaCompliance(ctx context.Context, d *plugin.QueryData, h *p
 		return nil, err
 	}
 
-	if err := getLimiter(ctx, d).Wait(ctx); err != nil {
+	if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
 		return nil, err
 	}
 	response, err := client.ZeroTrustAssessment.GetComplianceV1(

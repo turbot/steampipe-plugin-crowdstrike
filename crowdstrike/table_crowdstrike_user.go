@@ -10,6 +10,7 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
+	"golang.org/x/time/rate"
 )
 
 func tableCrowdStrikeUser(_ context.Context) *plugin.Table {
@@ -39,6 +40,10 @@ func listCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 		return nil, err
 	}
 
+	if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
+		return nil, err
+	}
+
 	response, err := client.UserManagement.RetrieveUserUUIDsByCID(
 		user_management.NewRetrieveUserUUIDsByCIDParamsWithContext(ctx),
 	)
@@ -51,7 +56,7 @@ func listCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 	}
 
 	userIdBatch := response.Payload.Resources
-	userBatch, err := getUsersByIds(ctx, client, userIdBatch)
+	userBatch, err := getUsersByIds(ctx, client, getRateLimiter(ctx, d), userIdBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +77,9 @@ func getCrowdStrikeUserRoleId(ctx context.Context, d *plugin.QueryData, h *plugi
 		plugin.Logger(ctx).Error("crowdstrike_host.getCrowdStrikeUser", "connection_error", err)
 		return nil, err
 	}
-
+	if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
+		return nil, err
+	}
 	item := h.Item.(*models.DomainUserMetadata)
 	response, err := client.UserManagement.GetUserRoleIds(
 		user_management.NewGetUserRoleIdsParamsWithContext(ctx).WithUserUUID(*item.UUID),
@@ -98,7 +105,7 @@ func getCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 	userId := d.KeyColumnQuals["uid"].GetStringValue()
 
-	u, err := getUsersByIds(ctx, client, []string{userId})
+	u, err := getUsersByIds(ctx, client, getRateLimiter(ctx, d), []string{userId})
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +113,12 @@ func getCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	return u[0], nil
 }
 
-func getUsersByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DomainUserMetadata, error) {
+func getUsersByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, rateLimiter *rate.Limiter, ids []string) ([]*models.DomainUserMetadata, error) {
+
+	if err := rateLimiter.Wait(ctx); err != nil {
+		return nil, err
+	}
+
 	response, err := client.UserManagement.RetrieveUser(
 		user_management.NewRetrieveUserParamsWithContext(ctx).WithIds(ids),
 	)

@@ -19,7 +19,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"crowdstrike_host":                    tableCrowdStrikeHost(ctx),
 			"crowdstrike_zta_assessment":          tableCrowdStrikeZtaAssessment(ctx),
 			"crowdstrike_zta_compliance":          tableCrowdStrikeZtaCompliance(ctx),
-			"crowdstrike_intel_indicator":         tableCrowdStrikeIntelIndicator(ctx),
+			"crowdstrike_intel_actor":             tableCrowdStrikeIntelActor(ctx),
 			"crowdstrike_detect":                  tableCrowdStrikeDetects(ctx),
 			"crowdstrike_spotlight_vulnerability": tableCrowdStrikeSpotlightVulnerability(ctx),
 			"crowdstrike_firewall_policy":         tableCrowdStrikeFirewallPolicy(ctx),

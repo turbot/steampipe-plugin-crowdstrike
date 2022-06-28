@@ -150,7 +150,7 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 		detectIdBatch := response.Payload.Resources
 		plugin.Logger(ctx).Trace("detect batch length", len(detectIdBatch))
-		detects, err := getDetectsByIds(ctx, client, getLimiter(ctx, d), detectIdBatch)
+		detects, err := getDetectsByIds(ctx, client, getRateLimiter(ctx, d), detectIdBatch)
 		if err != nil {
 			return nil, err
 		}
@@ -162,12 +162,11 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 			}
 		}
 
-		offset = offset + int64(len(detectIdBatch))
-
 		if err != nil {
 			return nil, err
 		}
 
+		offset = offset + int64(len(detectIdBatch))
 		if offset >= *response.Payload.Meta.Pagination.Total {
 			break
 		}
@@ -183,9 +182,9 @@ func getCrowdStrikeDetect(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 		return nil, err
 	}
 
-	detectId := d.KeyColumnQuals["detect_id"].GetStringValue()
+	detectId := d.KeyColumnQuals["detection_id"].GetStringValue()
 
-	detect, err := getDetectsByIds(ctx, client, getLimiter(ctx, d), []string{detectId})
+	detect, err := getDetectsByIds(ctx, client, getRateLimiter(ctx, d), []string{detectId})
 
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetect", "GetDetectSummaries error", err)

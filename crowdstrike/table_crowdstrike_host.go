@@ -145,43 +145,37 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	offset := ""
 
 	for {
-		var response *hosts.QueryDevicesByFilterScrollOK
-		var err error
 
-		err = retry.Constant(ctx, 500*time.Millisecond, func(ctx context.Context) error {
-			response, err = client.Hosts.QueryDevicesByFilterScroll(&hosts.QueryDevicesByFilterScrollParams{
-				Context: ctx,
-				Limit:   &limit,
-				Offset:  &offset,
-				Filter:  &filter,
-			})
+		if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
+			return nil, err
+		}
 
-			if response != nil && response.XRateLimitRemaining == 0 {
-				return retry.RetryableError(ErrRateLimitExceeded)
-			}
-
-			if err != nil {
-				plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeHosts", "query_error", err)
-				return err
-			}
-
-			hostDeviceIds := response.Payload.Resources
-			if len(hostDeviceIds) < 1 {
-				return nil
-			}
-			devices, err := getDeviceByIdBatch(ctx, client, hostDeviceIds)
-			if err != nil {
-				return err
-			}
-			for _, device := range devices {
-				d.StreamListItem(ctx, device)
-				if d.QueryStatus.RowsRemaining(ctx) < 1 {
-					return nil
-				}
-			}
-
-			return nil
+		response, err := client.Hosts.QueryDevicesByFilterScroll(&hosts.QueryDevicesByFilterScrollParams{
+			Context: ctx,
+			Limit:   &limit,
+			Offset:  &offset,
+			Filter:  &filter,
 		})
+
+		if err != nil {
+			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeHosts", "query_error", err)
+			return nil, err
+		}
+		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+			return nil, err
+		}
+
+		hostDeviceIds := response.Payload.Resources
+		devices, err := getDeviceByIdBatch(ctx, client, hostDeviceIds)
+		if err != nil {
+			return nil, err
+		}
+		for _, device := range devices {
+			d.StreamListItem(ctx, device)
+			if d.QueryStatus.RowsRemaining(ctx) < 1 {
+				return nil, nil
+			}
+		}
 
 		if err != nil {
 			return nil, err

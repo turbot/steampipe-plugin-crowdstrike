@@ -16,7 +16,7 @@ import (
 var ErrRateLimitExceeded error = errors.New("rate limit exceeded")
 var ErrResourceNotFound error = errors.New("resource not found")
 
-func getLimiter(ctx context.Context, d *plugin.QueryData) *rate.Limiter {
+func getRateLimiter(ctx context.Context, d *plugin.QueryData) *rate.Limiter {
 	if cachedData, ok := d.ConnectionManager.Cache.Get("limiter"); ok {
 		return cachedData.(*rate.Limiter)
 	}
