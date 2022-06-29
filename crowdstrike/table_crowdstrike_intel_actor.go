@@ -23,35 +23,84 @@ func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
 		},
 		List: &plugin.ListConfig{
 			Hydrate: listCrowdStrikeIntelActor,
+			KeyColumns: []*plugin.KeyColumn{
+				{
+					Name:      "slug",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
+				{
+					Name:      "active",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
+				{
+					Name:      "actor_type",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
+				{
+					Name:      "created_date",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+				{
+					Name:      "first_activity_date",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+				{
+					Name:      "last_activity_date",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+				{
+					Name:      "last_modified_date",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+			},
 		},
 		Columns: []*plugin.Column{
-			{Name: "active", Description: "TODO", Type: proto.ColumnType_BOOL},
-			{Name: "actor_type", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "capability", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "created_date", Description: "TODO", Type: proto.ColumnType_INT},
-			{Name: "description", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "ecrime_kill_chain", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "entitlements", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "first_activity_date", Description: "TODO", Type: proto.ColumnType_INT},
-			{Name: "group", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "id", Description: "TODO", Type: proto.ColumnType_INT},
-			{Name: "image", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "kill_chain", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "known_as", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "last_activity_date", Description: "TODO", Type: proto.ColumnType_INT},
-			{Name: "last_modified_date", Description: "TODO", Type: proto.ColumnType_INT},
-			{Name: "motivations", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "name", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "notify_users", Description: "TODO", Type: proto.ColumnType_BOOL},
-			{Name: "origins", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "region", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "rich_text_description", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "short_description", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "slug", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "target_countries", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "target_industries", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "thumbnail", Description: "TODO", Type: proto.ColumnType_JSON},
-			{Name: "url", Description: "TODO", Type: proto.ColumnType_STRING},
+			{Name: "active", Description: "If this actor is still active.", Type: proto.ColumnType_BOOL},
+			{Name: "actor_type", Description: "The type of actor.", Type: proto.ColumnType_STRING},
+			{Name: "capability", Description: "The actor's capability.", Type: proto.ColumnType_JSON},
+			{Name: "created_date", Description: "The creation date (as long)", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+				actor := td.HydrateItem.(*models.DomainActorDocument)
+				return transformInt64Timestamp(ctx, *actor.CreatedDate)
+			})},
+			{Name: "description", Description: "A description of the actor.", Type: proto.ColumnType_STRING},
+			{Name: "ecrime_kill_chain", Description: "eCrime kill chain fields.", Type: proto.ColumnType_JSON},
+			{Name: "entitlements", Description: "Entitlements of the actor.", Type: proto.ColumnType_JSON},
+			{Name: "first_activity_date", Description: "Date when first activity was detected", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+				actor := td.HydrateItem.(*models.DomainActorDocument)
+				return transformInt64Timestamp(ctx, *actor.FirstActivityDate)
+			})},
+			{Name: "group", Description: "The actor's group.", Type: proto.ColumnType_JSON},
+			{Name: "id", Description: "The actor's ID.", Type: proto.ColumnType_INT},
+			{Name: "image", Description: "URL to the image of the Actor.", Type: proto.ColumnType_JSON},
+			{Name: "kill_chain", Description: "Kill chain fields.", Type: proto.ColumnType_JSON},
+			{Name: "known_as", Description: "The actor's alias.", Type: proto.ColumnType_STRING},
+			{Name: "last_activity_date", Description: "Date of last activity", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+				actor := td.HydrateItem.(*models.DomainActorDocument)
+				return transformInt64Timestamp(ctx, *actor.LastActivityDate)
+			})},
+			{Name: "last_modified_date", Description: "Date when this actor was last modified.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+				actor := td.HydrateItem.(*models.DomainActorDocument)
+				return transformInt64Timestamp(ctx, *actor.LastModifiedDate)
+			})},
+			{Name: "motivations", Description: "The actor's motivations.", Type: proto.ColumnType_JSON},
+			{Name: "name", Description: "The actor's name.", Type: proto.ColumnType_STRING},
+			{Name: "notify_users", Description: "Notified users.", Type: proto.ColumnType_BOOL},
+			{Name: "origins", Description: "The actor's country of origin.", Type: proto.ColumnType_JSON},
+			{Name: "region", Description: "The actor's region.", Type: proto.ColumnType_JSON},
+			{Name: "rich_text_description", Description: "A rich text description of the actor.", Type: proto.ColumnType_STRING},
+			{Name: "short_description", Description: "A short description of the actor.", Type: proto.ColumnType_STRING},
+			{Name: "slug", Description: "A slug for the actor.", Type: proto.ColumnType_STRING},
+			{Name: "target_countries", Description: "The actor's targeted countries.", Type: proto.ColumnType_JSON},
+			{Name: "target_industries", Description: "The actor's targeted industries.", Type: proto.ColumnType_JSON},
+			{Name: "thumbnail", Description: "URL to an image for this actor", Type: proto.ColumnType_JSON},
+			{Name: "url", Description: "The URL to the falcon portal for this actor", Type: proto.ColumnType_STRING},
 
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Indicator")},
