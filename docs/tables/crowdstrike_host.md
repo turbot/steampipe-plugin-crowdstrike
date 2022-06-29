@@ -1,10 +1,10 @@
-# Table: crowdstrike_detect
+# Table: crowdstrike_host
 
 Hosts are endpoints that run the Falcon sensor.
 
 ## Examples
 
-### List detections from the last 3 months
+### List all known hosts
 
 ```sql
 select
@@ -15,7 +15,7 @@ from
   crowdstrike_host
 ```
 
-### List hosts which have not been logged in to in the last 3 months
+### List hosts which have been inactive for the last 3 months
 
 ```sql
 select
