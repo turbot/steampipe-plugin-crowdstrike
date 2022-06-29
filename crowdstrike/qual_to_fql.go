@@ -30,7 +30,7 @@ func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, ze
 			return "", ctx.Err()
 		}
 		for _, qual := range qualifiers.Quals {
-			plugin.Logger(ctx).Trace("generating line for", qual.Column, qual.Operator, qual.Value.Value)
+			plugin.Logger(ctx).Trace("generating line for:")
 			plugin.Logger(ctx).Trace("column", qual.Column)
 			plugin.Logger(ctx).Trace("operator", qual.Operator)
 			plugin.Logger(ctx).Trace("value", qual.Value.Value)
