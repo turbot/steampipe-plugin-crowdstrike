@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/turbot/go-kit/helpers"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
@@ -13,7 +14,10 @@ import (
 
 var QualToFqlNoKeyignore = []string{}
 
-const qualToFqlTimestampFormat = "2006-01-02"
+const (
+	qualToFqlTimestampFormat = time.RFC3339
+	beginningOfTimeFql       = "01-01-0001"
+)
 
 func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, zeroValue ...string) (string, error) {
 	plugin.Logger(ctx).Trace("generating filter from quals")
@@ -28,7 +32,7 @@ func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, ze
 		}
 		for _, qual := range qualifiers.Quals {
 			property, operator, value := contructFQLLine(qual)
-			filters = append(filters, fmt.Sprintf("%s:%s%s", property, operator, value))
+			filters = append(filters, fmt.Sprintf("%s: %s%s", property, operator, value))
 		}
 	}
 	if len(filters) == 0 {
@@ -45,17 +49,18 @@ func contructFQLLine(qual *quals.Qual) (property string, operator string, value 
 	property = qual.Column
 	switch qual.Operator {
 	case ">":
-		operator = ">"
 	case ">=":
-		operator = ">="
+		operator = ">"
 	case "=":
 		operator = ""
 	case "<=":
-		operator = "<="
 	case "<":
 		operator = "<"
 	case quals.QualOperatorIsNull:
 		operator = ""
+		value = "null"
+	case quals.QualOperatorIsNotNull:
+		operator = "!"
 		value = "null"
 		return
 	}
