@@ -16,7 +16,6 @@ var QualToFqlNoKeyignore = []string{}
 
 const (
 	qualToFqlTimestampFormat = time.RFC3339
-	beginningOfTimeFql       = "01-01-0001"
 )
 
 func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, zeroValue ...string) (string, error) {
