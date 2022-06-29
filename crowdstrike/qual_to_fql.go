@@ -30,7 +30,11 @@ func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, ze
 			return "", ctx.Err()
 		}
 		for _, qual := range qualifiers.Quals {
-			property, operator, value := contructFQLLine(qual)
+			plugin.Logger(ctx).Trace("generating line for", qual.Column, qual.Operator, qual.Value.Value)
+			plugin.Logger(ctx).Trace("column", qual.Column)
+			plugin.Logger(ctx).Trace("operator", qual.Operator)
+			plugin.Logger(ctx).Trace("value", qual.Value.Value)
+			property, operator, value := contructFQLLine(ctx, qual)
 			filters = append(filters, fmt.Sprintf("%s: %s%s", property, operator, value))
 		}
 	}
@@ -44,16 +48,14 @@ func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, ze
 	return constructedFilter, nil
 }
 
-func contructFQLLine(qual *quals.Qual) (property string, operator string, value string) {
+func contructFQLLine(ctx context.Context, qual *quals.Qual) (property string, operator string, value string) {
 	property = qual.Column
 	switch qual.Operator {
-	case ">":
-	case ">=":
+	case ">", ">=":
 		operator = ">"
 	case "=":
 		operator = ""
-	case "<=":
-	case "<":
+	case "<=", "<":
 		operator = "<"
 	case quals.QualOperatorIsNull:
 		operator = ""
