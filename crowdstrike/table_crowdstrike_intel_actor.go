@@ -116,6 +116,11 @@ func listCrowdStrikeIntelActor(ctx context.Context, d *plugin.QueryData, h *plug
 	}
 
 	limit := int64(500)
+	// Reduce the basic request limit down if the user has only requested a small number of rows
+	if d.QueryContext.Limit != nil && *d.QueryContext.Limit < limit {
+		limit = *d.QueryContext.Limit
+	}
+
 	filter, err := QualToFQL(ctx, d, QualToFqlNoKeyignore)
 	if err != nil {
 		return nil, err
