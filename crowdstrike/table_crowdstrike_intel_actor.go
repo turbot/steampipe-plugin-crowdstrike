@@ -10,7 +10,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
-	"golang.org/x/time/rate"
 )
 
 func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
@@ -132,10 +131,6 @@ func listCrowdStrikeIntelActor(ctx context.Context, d *plugin.QueryData, h *plug
 			f = nil
 		}
 
-		if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
-			return nil, err
-		}
-
 		response, err := client.Intel.QueryIntelActorIds(
 			intel.NewQueryIntelActorIdsParamsWithContext(ctx).
 				WithOffset(&offset).
@@ -153,7 +148,7 @@ func listCrowdStrikeIntelActor(ctx context.Context, d *plugin.QueryData, h *plug
 		}
 
 		actorIdBatch := response.Payload.Resources
-		actors, err := getIntelActorByIds(ctx, client, getRateLimiter(ctx, d), actorIdBatch)
+		actors, err := getIntelActorByIds(ctx, client, actorIdBatch)
 		for _, actor := range actors {
 			d.StreamListItem(ctx, actor)
 			if d.QueryStatus.RowsRemaining(ctx) < 1 {
@@ -178,7 +173,7 @@ func getCrowdStrikeIntelActor(ctx context.Context, d *plugin.QueryData, h *plugi
 
 	detectId := d.KeyColumnQuals["id"].GetStringValue()
 
-	detect, err := getIntelActorByIds(ctx, client, getRateLimiter(ctx, d), []string{detectId})
+	detect, err := getIntelActorByIds(ctx, client, []string{detectId})
 
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_intel_actor.getCrowdStrikeIntelActor", "getIntelIndicatorByIds error", err)
@@ -188,13 +183,9 @@ func getCrowdStrikeIntelActor(ctx context.Context, d *plugin.QueryData, h *plugi
 	return detect[0], nil
 }
 
-func getIntelActorByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, limiter *rate.Limiter, ids []string) ([]*models.DomainActorDocument, error) {
+func getIntelActorByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DomainActorDocument, error) {
 	if len(ids) == 0 {
 		return []*models.DomainActorDocument{}, nil
-	}
-
-	if err := limiter.Wait(ctx); err != nil {
-		return nil, err
 	}
 
 	response, err := client.Intel.GetIntelActorEntities(

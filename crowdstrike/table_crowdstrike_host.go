@@ -2,13 +2,11 @@ package crowdstrike
 
 import (
 	"context"
-	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/crowdstrike/gofalcon/falcon/client/hosts"
 	"github.com/crowdstrike/gofalcon/falcon/models"
-	"github.com/sethvargo/go-retry"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
@@ -151,10 +149,6 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 	for {
 
-		if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
-			return nil, err
-		}
-
 		response, err := client.Hosts.QueryDevicesByFilterScroll(&hosts.QueryDevicesByFilterScrollParams{
 			Context: ctx,
 			Limit:   &limit,
@@ -215,24 +209,18 @@ func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecif
 	if len(ids) == 0 {
 		return []*models.DomainDeviceSwagger{}, nil
 	}
-	err = retry.Constant(ctx, 500*time.Millisecond, func(ctx context.Context) error {
-		response, err := client.Hosts.GetDeviceDetails(&hosts.GetDeviceDetailsParams{
-			Ids:     ids,
-			Context: ctx,
-		})
-		if response != nil && response.XRateLimitRemaining == 0 {
-			return retry.RetryableError(ErrRateLimitExceeded)
-		}
-		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.GetCrowdStrikeHost", "get_device_error", err)
-			return err
-		}
-		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-			return err
-		}
-		res = response.Payload.Resources
-
-		return nil
+	response, err := client.Hosts.GetDeviceDetails(&hosts.GetDeviceDetailsParams{
+		Ids:     ids,
+		Context: ctx,
 	})
-	return
+
+	if err != nil {
+		plugin.Logger(ctx).Error("crowdstrike_host.GetCrowdStrikeHost", "get_device_error", err)
+		return nil, err
+	}
+	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+		return nil, err
+	}
+
+	return response.Payload.Resources, nil
 }

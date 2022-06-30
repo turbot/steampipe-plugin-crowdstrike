@@ -10,7 +10,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
-	"golang.org/x/time/rate"
 )
 
 //// TABLE DEFINITION
@@ -154,7 +153,7 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 		detectIdBatch := response.Payload.Resources
 		plugin.Logger(ctx).Trace("detect batch length", len(detectIdBatch))
-		detects, err := getDetectsByIds(ctx, client, getRateLimiter(ctx, d), detectIdBatch)
+		detects, err := getDetectsByIds(ctx, client, detectIdBatch)
 		if err != nil {
 			return nil, err
 		}
@@ -188,7 +187,7 @@ func getCrowdStrikeDetect(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 	detectId := d.KeyColumnQuals["detection_id"].GetStringValue()
 
-	detect, err := getDetectsByIds(ctx, client, getRateLimiter(ctx, d), []string{detectId})
+	detect, err := getDetectsByIds(ctx, client, []string{detectId})
 
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetect", "GetDetectSummaries error", err)
@@ -198,13 +197,9 @@ func getCrowdStrikeDetect(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	return detect[0], nil
 }
 
-func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, limiter *rate.Limiter, ids []string) ([]*models.DomainAPIDetectionDocument, error) {
+func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DomainAPIDetectionDocument, error) {
 	if len(ids) == 0 {
 		return []*models.DomainAPIDetectionDocument{}, nil
-	}
-
-	if err := limiter.Wait(ctx); err != nil {
-		return nil, err
 	}
 
 	response, err := client.Detects.GetDetectSummaries(

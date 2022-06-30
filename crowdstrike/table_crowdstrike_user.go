@@ -10,7 +10,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
-	"golang.org/x/time/rate"
 )
 
 func tableCrowdStrikeUser(_ context.Context) *plugin.Table {
@@ -40,10 +39,6 @@ func listCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 		return nil, err
 	}
 
-	if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
-		return nil, err
-	}
-
 	response, err := client.UserManagement.RetrieveUserUUIDsByCID(
 		user_management.NewRetrieveUserUUIDsByCIDParamsWithContext(ctx),
 	)
@@ -56,7 +51,7 @@ func listCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 	}
 
 	userIdBatch := response.Payload.Resources
-	userBatch, err := getUsersByIds(ctx, client, getRateLimiter(ctx, d), userIdBatch)
+	userBatch, err := getUsersByIds(ctx, client, userIdBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -74,24 +69,24 @@ func listCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 func getCrowdStrikeUserRoleId(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	client, err := getCrowdStrikeClient(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_host.getCrowdStrikeUser", "connection_error", err)
+		plugin.Logger(ctx).Error("crowdstrike_user.getCrowdStrikeUser", "connection_error", err)
 		return nil, err
 	}
-	if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
-		return nil, err
-	}
+
 	item := h.Item.(*models.DomainUserMetadata)
 	response, err := client.UserManagement.GetUserRoleIds(
 		user_management.NewGetUserRoleIdsParamsWithContext(ctx).WithUserUUID(*item.UUID),
 	)
 	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_host.getUsersByIds", "RetrieveUserError", err)
+		plugin.Logger(ctx).Error("crowdstrike_user.getCrowdStrikeUserRoleId", "RetrieveUserRoleError", err)
 		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_host.getUsersByIds", "RetrieveUserError", err)
+		plugin.Logger(ctx).Error("crowdstrike_user.getCrowdStrikeUserRoleId", "RetrieveUserRoleError", err)
 		return nil, err
 	}
+
+	plugin.Logger(ctx).Trace("", response.Payload.Resources)
 
 	return response.Payload.Resources, nil
 }
@@ -105,7 +100,7 @@ func getCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 	userId := d.KeyColumnQuals["uid"].GetStringValue()
 
-	u, err := getUsersByIds(ctx, client, getRateLimiter(ctx, d), []string{userId})
+	u, err := getUsersByIds(ctx, client, []string{userId})
 	if err != nil {
 		return nil, err
 	}
@@ -113,12 +108,10 @@ func getCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	return u[0], nil
 }
 
-func getUsersByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, rateLimiter *rate.Limiter, ids []string) ([]*models.DomainUserMetadata, error) {
-
-	if err := rateLimiter.Wait(ctx); err != nil {
-		return nil, err
+func getUsersByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DomainUserMetadata, error) {
+	if len(ids) == 0 {
+		return []*models.DomainUserMetadata{}, nil
 	}
-
 	response, err := client.UserManagement.RetrieveUser(
 		user_management.NewRetrieveUserParamsWithContext(ctx).WithIds(ids),
 	)

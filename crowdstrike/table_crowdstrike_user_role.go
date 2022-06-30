@@ -45,10 +45,6 @@ func listCrowdStrikeUserRole(ctx context.Context, d *plugin.QueryData, h *plugin
 		return nil, err
 	}
 
-	if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
-		return nil, err
-	}
-
 	response, err := client.UserManagement.GetAvailableRoleIds(
 		user_management.NewGetAvailableRoleIdsParamsWithContext(ctx),
 	)

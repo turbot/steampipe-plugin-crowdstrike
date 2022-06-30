@@ -75,9 +75,6 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 
 	plugin.Logger(ctx).Trace("DEVICE_ID", deviceId)
 
-	if err := getRateLimiter(ctx, d).Wait(ctx); err != nil {
-		return nil, err
-	}
 	response, err := client.ZeroTrustAssessment.GetAssessmentV1(
 		zero_trust_assessment.NewGetAssessmentV1Params().
 			WithContext(ctx).

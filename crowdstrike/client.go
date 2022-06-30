@@ -2,34 +2,14 @@ package crowdstrike
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
-	"golang.org/x/time/rate"
 
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 )
-
-var ErrRateLimitExceeded error = errors.New("rate limit exceeded")
-var ErrResourceNotFound error = errors.New("resource not found")
-
-func getRateLimiter(ctx context.Context, d *plugin.QueryData) *rate.Limiter {
-	if cachedData, ok := d.ConnectionManager.Cache.Get("limiter"); ok {
-		return cachedData.(*rate.Limiter)
-	}
-
-	// as per https://developer.crowdstrike.com/crowdstrike/docs/oauth2-based-apis#rate-limiting
-	// request rate is limited to 100 tokens/second with a burst of 100 tokens
-	limiter := rate.NewLimiter(100, 100)
-
-	// save client in cache
-	d.ConnectionManager.Cache.Set("limiter", limiter)
-
-	return limiter
-}
 
 func getCrowdStrikeClient(ctx context.Context, d *plugin.QueryData) (*client.CrowdStrikeAPISpecification, error) {
 	// Try to load client from cache
