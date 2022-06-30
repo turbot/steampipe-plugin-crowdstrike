@@ -88,7 +88,7 @@ func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 			{Name: "quarantined_files", Description: "Files that have been quarantined.", Type: proto.ColumnType_JSON},
 			{Name: "seconds_to_resolved", Description: "Time that it took to move a detection from newand one of the resolved states (true_positive, false_positive, and ignored).", Type: proto.ColumnType_INT},
 			{Name: "seconds_to_triaged", Description: "Time that it took to move a detection from new to in_progress.", Type: proto.ColumnType_INT},
-			{Name: "show_in_ui", Description: "Whether this is shown in the User Interface", Type: proto.ColumnType_BOOL},
+			{Name: "show_in_ui", Description: "Whether this is shown in the User Interface.", Type: proto.ColumnType_BOOL},
 			{Name: "status", Description: "The current status of the detection. Values include new, in_progress, true_positive, false_positive, and ignored.", Type: proto.ColumnType_STRING},
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("AssignedToName")},

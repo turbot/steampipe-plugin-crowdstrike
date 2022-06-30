@@ -64,14 +64,14 @@ func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
 			{Name: "active", Description: "If this actor is still active.", Type: proto.ColumnType_BOOL},
 			{Name: "actor_type", Description: "The type of actor.", Type: proto.ColumnType_STRING},
 			{Name: "capability", Description: "The actor's capability.", Type: proto.ColumnType_JSON},
-			{Name: "created_date", Description: "The creation date (as long)", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+			{Name: "created_date", Description: "The creation date.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				actor := td.HydrateItem.(*models.DomainActorDocument)
 				return transformInt64Timestamp(ctx, *actor.CreatedDate)
 			})},
 			{Name: "description", Description: "A description of the actor.", Type: proto.ColumnType_STRING},
 			{Name: "ecrime_kill_chain", Description: "eCrime kill chain fields.", Type: proto.ColumnType_JSON},
 			{Name: "entitlements", Description: "Entitlements of the actor.", Type: proto.ColumnType_JSON},
-			{Name: "first_activity_date", Description: "Date when first activity was detected", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+			{Name: "first_activity_date", Description: "Date when first activity was detected.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				actor := td.HydrateItem.(*models.DomainActorDocument)
 				return transformInt64Timestamp(ctx, *actor.FirstActivityDate)
 			})},
@@ -80,7 +80,7 @@ func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
 			{Name: "image", Description: "URL to the image of the Actor.", Type: proto.ColumnType_JSON},
 			{Name: "kill_chain", Description: "Kill chain fields.", Type: proto.ColumnType_JSON},
 			{Name: "known_as", Description: "The actor's alias.", Type: proto.ColumnType_STRING},
-			{Name: "last_activity_date", Description: "Date of last activity", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+			{Name: "last_activity_date", Description: "Date of last activity.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				actor := td.HydrateItem.(*models.DomainActorDocument)
 				return transformInt64Timestamp(ctx, *actor.LastActivityDate)
 			})},
@@ -98,8 +98,8 @@ func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
 			{Name: "slug", Description: "A slug for the actor.", Type: proto.ColumnType_STRING},
 			{Name: "target_countries", Description: "The actor's targeted countries.", Type: proto.ColumnType_JSON},
 			{Name: "target_industries", Description: "The actor's targeted industries.", Type: proto.ColumnType_JSON},
-			{Name: "thumbnail", Description: "URL to an image for this actor", Type: proto.ColumnType_JSON},
-			{Name: "url", Description: "The URL to the falcon portal for this actor", Type: proto.ColumnType_STRING},
+			{Name: "thumbnail", Description: "URL to an image for this actor.", Type: proto.ColumnType_JSON},
+			{Name: "url", Description: "The URL to the falcon portal for this actor.", Type: proto.ColumnType_STRING},
 
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Indicator")},
