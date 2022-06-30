@@ -34,10 +34,6 @@ func tableCrowdStrikeUserRole(_ context.Context) *plugin.Table {
 	}
 }
 
-type roleIdStruct struct {
-	RoleId string
-}
-
 func listCrowdStrikeUserRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	client, err := getCrowdStrikeClient(ctx, d)
 	if err != nil {
