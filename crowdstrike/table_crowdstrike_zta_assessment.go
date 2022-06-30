@@ -21,7 +21,7 @@ type ztaAssesmentStruct struct {
 func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "crowdstrike_zta_assessment",
-		Description: "TODO.",
+		Description: "ZeroTrust Assessments.",
 		List: &plugin.ListConfig{
 			Hydrate:       listCrowdStrikeZtaAssesment,
 			ParentHydrate: listCrowdStrikeHosts,
@@ -29,17 +29,17 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			{Name: "device_id", Description: "Host device ID.", Type: proto.ColumnType_STRING},
 			{Name: "cid", Description: "The Customer ID.", Type: proto.ColumnType_STRING},
-			{Name: "aid", Description: "TODO", Type: proto.ColumnType_STRING},
+			{Name: "aid", Description: "The agent ID", Type: proto.ColumnType_STRING},
 			{Name: "assessment", Description: "The Assessment object", Type: proto.ColumnType_JSON},
 			{Name: "assessment_items", Description: "Assessment items", Type: proto.ColumnType_JSON},
-			{Name: "event_platform", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "modified_time", Description: "TODO", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+			{Name: "event_platform", Description: "The platform on which the event occurred", Type: proto.ColumnType_STRING},
+			{Name: "modified_time", Description: "Timestamp of last modified", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
 				assessment := td.HydrateItem.(ztaAssesmentStruct)
 				return transformStrFmtDateTime(ctx, *assessment.ModifiedTime)
 			})},
-			{Name: "product_type_desc", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "sensor_file_status", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "system_serial_number", Description: "TODO", Type: proto.ColumnType_STRING},
+			{Name: "product_type_desc", Description: "Product type", Type: proto.ColumnType_STRING},
+			{Name: "sensor_file_status", Description: "Sensor file status", Type: proto.ColumnType_STRING},
+			{Name: "system_serial_number", Description: "System serial number", Type: proto.ColumnType_STRING},
 
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Hostname")},
