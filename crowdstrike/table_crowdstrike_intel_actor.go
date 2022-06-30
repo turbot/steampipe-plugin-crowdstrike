@@ -15,7 +15,7 @@ import (
 func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "crowdstrike_intel_actor",
-		Description: "TODO.",
+		Description: "Threat intelligence actors.",
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("id"),
 			Hydrate:    getCrowdStrikeIntelActor,
