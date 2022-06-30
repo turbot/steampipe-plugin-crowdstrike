@@ -42,7 +42,7 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 			{Name: "system_serial_number", Description: "System serial number", Type: proto.ColumnType_STRING},
 
 			// Steampipe standard columns
-			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Hostname")},
+			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("SystemSerialNumber")},
 		},
 	}
 }
