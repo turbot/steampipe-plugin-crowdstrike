@@ -15,7 +15,7 @@ import (
 func tableCrowdStrikeUserRole(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "crowdstrike_user_role",
-		Description: "TODO.",
+		Description: "User roles define the level of access of a user in Falcon.",
 		List: &plugin.ListConfig{
 			Hydrate: listCrowdStrikeUserRole,
 		},
@@ -24,10 +24,10 @@ func tableCrowdStrikeUserRole(_ context.Context) *plugin.Table {
 			KeyColumns: plugin.AllColumns([]string{"id"}),
 		},
 		Columns: []*plugin.Column{
-			{Name: "id", Description: "TODO", Type: proto.ColumnType_STRING},
-			{Name: "cid", Description: "TODO.", Type: proto.ColumnType_STRING},
-			{Name: "description", Description: "TODO.", Type: proto.ColumnType_STRING},
-			{Name: "display_name", Description: "TODO.", Type: proto.ColumnType_STRING},
+			{Name: "id", Description: "The ID of the role.", Type: proto.ColumnType_STRING},
+			{Name: "cid", Description: "The customer ID.", Type: proto.ColumnType_STRING},
+			{Name: "description", Description: "Description of the role.", Type: proto.ColumnType_STRING},
+			{Name: "display_name", Description: "The display name of the role.", Type: proto.ColumnType_STRING},
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("DisplayName")},
 		},
