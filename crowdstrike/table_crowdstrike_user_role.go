@@ -72,8 +72,7 @@ func getCrowdStrikeUserRole(ctx context.Context, d *plugin.QueryData, h *plugin.
 		return nil, err
 	}
 
-	var roleId string
-	roleId = d.KeyColumnQuals["id"].GetStringValue()
+	roleId := d.KeyColumnQuals["id"].GetStringValue()
 
 	response, err := getUserRolesByIds(ctx, client, []string{roleId})
 
