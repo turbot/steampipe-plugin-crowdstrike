@@ -64,30 +64,18 @@ func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
 			{Name: "active", Description: "If this actor is still active.", Type: proto.ColumnType_BOOL},
 			{Name: "actor_type", Description: "The type of actor.", Type: proto.ColumnType_STRING},
 			{Name: "capability", Description: "The actor's capability.", Type: proto.ColumnType_JSON},
-			{Name: "created_date", Description: "The creation date.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				actor := td.HydrateItem.(*models.DomainActorDocument)
-				return transformInt64Timestamp(ctx, *actor.CreatedDate)
-			})},
+			{Name: "created_date", Description: "The creation date.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("CreatedDate").Transform(int642TimestampTransformer)},
 			{Name: "description", Description: "A description of the actor.", Type: proto.ColumnType_STRING},
 			{Name: "ecrime_kill_chain", Description: "eCrime kill chain fields.", Type: proto.ColumnType_JSON},
 			{Name: "entitlements", Description: "Entitlements of the actor.", Type: proto.ColumnType_JSON},
-			{Name: "first_activity_date", Description: "Date when first activity was detected.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				actor := td.HydrateItem.(*models.DomainActorDocument)
-				return transformInt64Timestamp(ctx, *actor.FirstActivityDate)
-			})},
+			{Name: "first_activity_date", Description: "Date when first activity was detected.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("FirstActivityDate").Transform(int642TimestampTransformer)},
 			{Name: "group", Description: "The actor's group.", Type: proto.ColumnType_JSON},
 			{Name: "id", Description: "The actor's ID.", Type: proto.ColumnType_INT},
 			{Name: "image", Description: "URL to the image of the Actor.", Type: proto.ColumnType_JSON},
 			{Name: "kill_chain", Description: "Kill chain fields.", Type: proto.ColumnType_JSON},
 			{Name: "known_as", Description: "The actor's alias.", Type: proto.ColumnType_STRING},
-			{Name: "last_activity_date", Description: "Date of last activity.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				actor := td.HydrateItem.(*models.DomainActorDocument)
-				return transformInt64Timestamp(ctx, *actor.LastActivityDate)
-			})},
-			{Name: "last_modified_date", Description: "Date when this actor was last modified.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				actor := td.HydrateItem.(*models.DomainActorDocument)
-				return transformInt64Timestamp(ctx, *actor.LastModifiedDate)
-			})},
+			{Name: "last_activity_date", Description: "Date of last activity.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("LastActivityDate").Transform(int642TimestampTransformer)},
+			{Name: "last_modified_date", Description: "Date when this actor was last modified.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("LastModifiedDate").Transform(int642TimestampTransformer)},
 			{Name: "motivations", Description: "The actor's motivations.", Type: proto.ColumnType_JSON},
 			{Name: "name", Description: "The actor's name.", Type: proto.ColumnType_STRING},
 			{Name: "notify_users", Description: "Notified users.", Type: proto.ColumnType_BOOL},

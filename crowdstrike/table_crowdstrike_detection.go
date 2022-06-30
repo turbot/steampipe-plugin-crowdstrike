@@ -65,22 +65,13 @@ func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 			{Name: "behaviors", Description: "Behavorial details of the detection.", Type: proto.ColumnType_JSON},
 			{Name: "behaviors_processed", Description: "The processed behaviors.", Type: proto.ColumnType_JSON},
 			{Name: "cid", Description: "Your organization's customer ID (CID).", Type: proto.ColumnType_STRING},
-			{Name: "created_timestamp", Description: "Timestamp when this detection was first created.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				breach := td.HydrateItem.(*models.DomainAPIDetectionDocument)
-				return transformStrFmtDateTime(ctx, *breach.CreatedTimestamp)
-			})},
+			{Name: "created_timestamp", Description: "Timestamp when this detection was first created.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("CreatedTimestamp").Transform(strfmtDatetimeTransformer)},
 			{Name: "detection_id", Description: "The ID of the detection. This ID can be used in conjunction with other APIs, such as the Detection Details API, or the Resolve Detection API.", Type: proto.ColumnType_STRING},
 			{Name: "device", Description: "The device where this was detected.", Type: proto.ColumnType_JSON},
 			{Name: "email_sent", Description: "Whether email was sent when this was detected.", Type: proto.ColumnType_BOOL},
-			{Name: "first_behavior", Description: "When a detection has more than one associated behavior, this field captures the timestamp of the first behavior.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				breach := td.HydrateItem.(*models.DomainAPIDetectionDocument)
-				return transformStrFmtDateTime(ctx, *breach.FirstBehavior)
-			})},
+			{Name: "first_behavior", Description: "When a detection has more than one associated behavior, this field captures the timestamp of the first behavior.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("FirstBehavior").Transform(strfmtDatetimeTransformer)},
 			{Name: "host_info", Transform: transform.FromField("Hostinfo"), Description: "Information about the host where this was detected.", Type: proto.ColumnType_JSON},
-			{Name: "last_behavior", Description: "	When a detection has more than one associated behavior, this field captures the timestamp of the last behavior.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				breach := td.HydrateItem.(*models.DomainAPIDetectionDocument)
-				return transformStrFmtDateTime(ctx, *breach.LastBehavior)
-			})},
+			{Name: "last_behavior", Description: "When a detection has more than one associated behavior, this field captures the timestamp of the last behavior.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("LastBehavior").Transform(strfmtDatetimeTransformer)},
 			{Name: "max_confidence", Description: "When a detection has more than one associated behavior with varying confidence levels, this field captures the highest confidence value of all behaviors. Value can be any integer between 1-100.", Type: proto.ColumnType_INT},
 			{Name: "max_severity", Description: "When a detection has more than one associated behavior with varying severity levels, this field captures the highest severity value of all behaviors. Value can be any integer between 1-100.", Type: proto.ColumnType_INT},
 			{Name: "max_severity_display_name", Transform: transform.FromField("MaxSeverityDisplayname"), Description: "The name used in the UI to determine the severity of the detection. Values include Critical, High, Medium, and Low", Type: proto.ColumnType_STRING},

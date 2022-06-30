@@ -33,10 +33,7 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 			{Name: "assessment", Description: "The Assessment object.", Type: proto.ColumnType_JSON},
 			{Name: "assessment_items", Description: "Assessment items.", Type: proto.ColumnType_JSON},
 			{Name: "event_platform", Description: "The platform on which the event occurred.", Type: proto.ColumnType_STRING},
-			{Name: "modified_time", Description: "Timestamp of last modified.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.From(func(ctx context.Context, td *transform.TransformData) (interface{}, error) {
-				assessment := td.HydrateItem.(ztaAssesmentStruct)
-				return transformStrFmtDateTime(ctx, *assessment.ModifiedTime)
-			})},
+			{Name: "modified_time", Description: "Timestamp of last modified.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("ModifiedTime").Transform(strfmtDatetimeTransformer)},
 			{Name: "product_type_desc", Description: "Product type.", Type: proto.ColumnType_STRING},
 			{Name: "sensor_file_status", Description: "Sensor file status.", Type: proto.ColumnType_STRING},
 			{Name: "system_serial_number", Description: "System serial number.", Type: proto.ColumnType_STRING},

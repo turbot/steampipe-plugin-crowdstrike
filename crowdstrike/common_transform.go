@@ -5,12 +5,13 @@ import (
 	"time"
 
 	"github.com/go-openapi/strfmt"
+	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
 )
 
-func transformStrFmtDateTime(ctx context.Context, date strfmt.DateTime) (interface{}, error) {
-	return date.String(), nil
+func strfmtDatetimeTransformer(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+	return td.Value.(*strfmt.DateTime).String(), nil
 }
-
-func transformInt64Timestamp(ctx context.Context, date int64) (interface{}, error) {
-	return time.Unix(date, 0).Format(time.RFC3339), nil
+func int642TimestampTransformer(ctx context.Context, td *transform.TransformData) (interface{}, error) {
+	v := td.Value.(*int64)
+	return time.Unix(*v, 0).Format(time.RFC3339), nil
 }
