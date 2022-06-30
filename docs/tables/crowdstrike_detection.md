@@ -1,4 +1,4 @@
-# Table: crowdstrike_detect
+# Table: crowdstrike_detection
 
 Detections are events identified by Falcon sensors on the hosts in your environment.
 
@@ -11,7 +11,7 @@ select
   detection_id,
   created_timestamp
 from
-  crowdstrike_detect
+  crowdstrike_detection
 ```
 
 ### List detections from the last 3 months
@@ -21,7 +21,7 @@ select
   detection_id,
   created_timestamp
 from
-  crowdstrike_detect
+  crowdstrike_detection
 where
   created_timestamp > current_date - interval '3 months';
 ```
@@ -33,7 +33,7 @@ select
   detection_id,
   created_timestamp
 from
-  crowdstrike_detect
+  crowdstrike_detection
 where
   detection_id = 'ldt:6f8d8xxxx5b44xxxxxxxxxxb04e0acfa:423017xxxxxxxxxx41'
 ```
