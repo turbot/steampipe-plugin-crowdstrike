@@ -4,7 +4,7 @@ With the Actors API, Falcon Intel subscribers can search for data about actors t
 
 ## Examples
 
-### List all known intelligence actors
+### Basic info
 
 ```sql
 select

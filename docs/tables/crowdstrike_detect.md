@@ -4,6 +4,16 @@ Detections are events identified by Falcon sensors on the hosts in your environm
 
 ## Examples
 
+### Basic info
+
+```sql
+select
+  detection_id,
+  created_timestamp
+from
+  crowdstrike_detect
+```
+
 ### List detections from the last 3 months
 
 ```sql

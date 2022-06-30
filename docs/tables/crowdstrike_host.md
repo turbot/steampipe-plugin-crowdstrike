@@ -4,7 +4,7 @@ Hosts are endpoints that run the Falcon sensor.
 
 ## Examples
 
-### List all known hosts
+### Basic info
 
 ```sql
 select

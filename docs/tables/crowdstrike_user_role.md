@@ -4,7 +4,7 @@ A user account's roles determine permissions or access to features and functiona
 
 ## Examples
 
-### List all user roles
+### Basic info
 
 ```sql
 select
