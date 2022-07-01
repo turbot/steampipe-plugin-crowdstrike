@@ -26,6 +26,46 @@ where
   created_timestamp > current_date - interval '3 months';
 ```
 
+### List high severity detections
+
+```sql
+select
+  detection_id,
+  created_timestamp,
+  device ->> 'device_id' as device_id
+from
+  crowdstrike_detection
+where
+  max_severity = 50;
+```
+
+### List detections in devices which belong to a network
+
+```sql
+select
+  detection_id,
+  created_timestamp,
+  device ->> 'device_id' as device_id,
+  device ->> 'external_ip' as external_ip,
+  network((device ->> 'external_ip')::INET) as network
+from
+  crowdstrike_detection
+where
+  network((device ->> 'external_ip')::INET) = '119.18.0.0/28';
+```
+
+### List open detections
+
+```sql
+select
+  detection_id,
+  created_timestamp
+from
+  crowdstrike_detection
+where
+  status = 'open';
+```
+
 ### Select a specific detection
 
 ```sql
@@ -35,5 +75,5 @@ select
 from
   crowdstrike_detection
 where
-  detection_id = 'ldt:6f8d8xxxx5b44xxxxxxxxxxb04e0acfa:423017xxxxxxxxxx41'
+  detection_id = 'ldt:6f8d8xxxx5b44xxxxxxxxxxb04e0acfa:423017xxxxxxxxxx41';
 ```
