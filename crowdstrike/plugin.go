@@ -21,7 +21,6 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"crowdstrike_intel_actor":             tableCrowdStrikeIntelActor(ctx),
 			"crowdstrike_spotlight_vulnerability": tableCrowdStrikeSpotlightVulnerability(ctx),
 			"crowdstrike_user":                    tableCrowdStrikeUser(ctx),
-			"crowdstrike_user_role":               tableCrowdStrikeUserRole(ctx),
 			"crowdstrike_zta_assessment":          tableCrowdStrikeZtaAssessment(ctx),
 			"crowdstrike_zta_compliance":          tableCrowdStrikeZtaCompliance(ctx),
 		},
