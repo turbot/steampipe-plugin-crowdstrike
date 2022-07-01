@@ -58,6 +58,10 @@ func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 				},
 			},
 		},
+		Get: &plugin.GetConfig{
+			KeyColumns: plugin.SingleColumn("detection_id"),
+			Hydrate:    getCrowdStrikeDetect,
+		},
 		Columns: []*plugin.Column{
 			{Name: "adversary_ids", Description: "If behaviors or indicators in a detection are attributed to an adversary that is tracked by CrowdStrike Falcon Intelligence, those adversaries will have an ID associated with them. These IDs are found in a detection's metadata which can be viewed using the Detection Details API.", Type: proto.ColumnType_JSON, Transform: transform.FromJSONTag()},
 			{Name: "assigned_to_name", Description: "The human-readable name of the user to whom the detection is currently assigned.", Type: proto.ColumnType_STRING},

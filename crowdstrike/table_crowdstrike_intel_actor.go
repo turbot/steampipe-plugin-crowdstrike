@@ -137,6 +137,9 @@ func listCrowdStrikeIntelActor(ctx context.Context, d *plugin.QueryData, h *plug
 
 		actorIdBatch := response.Payload.Resources
 		actors, err := getIntelActorByIds(ctx, client, actorIdBatch)
+		if err != nil {
+			return nil, err
+		}
 		for _, actor := range actors {
 			d.StreamListItem(ctx, actor)
 			if d.QueryStatus.RowsRemaining(ctx) < 1 {

@@ -19,6 +19,10 @@ func tableCrowdStrikeUser(_ context.Context) *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate: listCrowdStrikeUser,
 		},
+		Get: &plugin.GetConfig{
+			KeyColumns: plugin.SingleColumn("uid"),
+			Hydrate:    getCrowdStrikeUser,
+		},
 		Columns: []*plugin.Column{
 			{Name: "customer", Description: "The customer ID.", Type: proto.ColumnType_STRING},
 			{Name: "first_name", Description: "First name of the user.", Type: proto.ColumnType_STRING},
