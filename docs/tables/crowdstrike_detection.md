@@ -66,6 +66,20 @@ where
   status = 'open';
 ```
 
+### List open detections from the last 4 days
+
+```sql
+select
+  detection_id,
+  device ->> 'hostname' as hostname,
+  created_timestamp
+from
+  crowdstrike_detection
+where
+  status = 'open'
+  and now() - created_timestamp > interval '4days';
+```
+
 ### Select a specific detection
 
 ```sql
