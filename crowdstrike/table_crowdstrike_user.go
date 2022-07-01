@@ -29,7 +29,7 @@ func tableCrowdStrikeUser(_ context.Context) *plugin.Table {
 			{Name: "last_name", Description: "Last name of the user.", Type: proto.ColumnType_STRING},
 			{Name: "uid", Description: "User ID.", Type: proto.ColumnType_STRING},
 			{Name: "uuid", Description: "A unique identifier for the user.", Type: proto.ColumnType_STRING},
-			{Name: "roles", Description: "Role IDs of roles assigned to a user.", Type: proto.ColumnType_JSON, Hydrate: getCrowdStrikeUserRoleId},
+			{Name: "roles", Description: "Role IDs of roles assigned to a user.", Type: proto.ColumnType_JSON, Transform: transform.FromValue(), Hydrate: getCrowdStrikeUserRoleId},
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("UID")},
 		},
