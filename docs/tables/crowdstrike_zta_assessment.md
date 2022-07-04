@@ -31,7 +31,7 @@ where
   (assessment ->> 'overall')::int > 92
 ```
 
-### List device_ids with firewalls disabled
+### List device IDs with firewalls disabled
 
 ```sql
 select
