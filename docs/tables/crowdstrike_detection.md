@@ -80,7 +80,7 @@ where
   and now() - created_timestamp > interval '4days';
 ```
 
-### Select a specific detection
+### Get a specific detection
 
 ```sql
 select
