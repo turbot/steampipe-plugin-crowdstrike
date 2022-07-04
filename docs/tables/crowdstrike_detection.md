@@ -11,7 +11,7 @@ select
   detection_id,
   created_timestamp
 from
-  crowdstrike_detection
+  crowdstrike_detection;
 ```
 
 ### List detections from the last 3 months
