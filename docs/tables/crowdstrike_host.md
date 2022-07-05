@@ -12,7 +12,7 @@ select
   hostname,
   last_login_timestamp
 from
-  crowdstrike_host
+  crowdstrike_host;
 ```
 
 ### List hosts which have been inactive for the last 3 months
@@ -25,7 +25,44 @@ select
 from
   crowdstrike_host
 where
-  last_login_timestamp < (current_date - interval '3months')
+  last_login_timestamp < (current_date - interval '3 months');
+```
+
+### List hosts which have atleast one `prevention` policy applied
+
+```sql
+select
+  hostname,
+  policies
+from
+  crowdstrike_host,
+  jsonb_array_elements(policies) as t
+where
+  t ->> 'policy_type' = 'prevention';
+```
+
+### List hosts which do not have `firewall` applied
+
+```sql
+select
+  hostname,
+  device_policies
+from
+  crowdstrike_host
+where
+  (device_policies -> 'firewall' -> 'applied')::bool = true;
+```
+
+### List hosts which are operating in `reduced_functionality_mode`
+
+```sql
+select
+  hostname,
+  device_policies
+from
+  crowdstrike_host
+where
+  reduced_functionality_mode = 'yes';
 ```
 
 ### List hosts which are known to have critical `open` vulnerabilities

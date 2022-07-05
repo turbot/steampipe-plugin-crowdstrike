@@ -9,7 +9,12 @@ Detections are events identified by Falcon sensors on the hosts in your environm
 ```sql
 select
   detection_id,
-  created_timestamp
+  created_timestamp,
+  device ->> 'device_id' as device_id,
+  device ->> 'hostname' as hostname,
+  device ->> 'platform_name' as platform_name,
+  device ->> 'os_version' as os_version,
+  status
 from
   crowdstrike_detection;
 ```
@@ -19,20 +24,29 @@ from
 ```sql
 select
   detection_id,
-  created_timestamp
+  created_timestamp,
+  device ->> 'device_id' as device_id,
+  device ->> 'hostname' as hostname,
+  device ->> 'platform_name' as platform_name,
+  device ->> 'os_version' as os_version,
+  status
 from
   crowdstrike_detection
 where
   created_timestamp > current_date - interval '3 months';
 ```
 
-### List high severity detections
+### List detections with a `severity` more than a threshold
 
 ```sql
 select
   detection_id,
   created_timestamp,
-  device ->> 'device_id' as device_id
+  device ->> 'device_id' as device_id,
+  device ->> 'hostname' as hostname,
+  device ->> 'platform_name' as platform_name,
+  device ->> 'os_version' as os_version,
+  status
 from
   crowdstrike_detection
 where
@@ -46,6 +60,9 @@ select
   detection_id,
   created_timestamp,
   device ->> 'device_id' as device_id,
+  device ->> 'hostname' as hostname,
+  device ->> 'platform_name' as platform_name,
+  device ->> 'os_version' as os_version,
   device ->> 'external_ip' as external_ip,
   network((device ->> 'external_ip')::INET) as network
 from
@@ -59,7 +76,12 @@ where
 ```sql
 select
   detection_id,
-  created_timestamp
+  created_timestamp,
+  device ->> 'device_id' as device_id,
+  device ->> 'hostname' as hostname,
+  device ->> 'platform_name' as platform_name,
+  device ->> 'os_version' as os_version,
+  status
 from
   crowdstrike_detection
 where
@@ -71,8 +93,12 @@ where
 ```sql
 select
   detection_id,
+  created_timestamp,
+  device ->> 'device_id' as device_id,
   device ->> 'hostname' as hostname,
-  created_timestamp
+  device ->> 'platform_name' as platform_name,
+  device ->> 'os_version' as os_version,
+  status
 from
   crowdstrike_detection
 where
@@ -85,7 +111,12 @@ where
 ```sql
 select
   detection_id,
-  created_timestamp
+  created_timestamp,
+  device ->> 'device_id' as device_id,
+  device ->> 'hostname' as hostname,
+  device ->> 'platform_name' as platform_name,
+  device ->> 'os_version' as os_version,
+  status
 from
   crowdstrike_detection
 where
