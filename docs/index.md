@@ -19,11 +19,14 @@ og_image: "/images/plugins/turbot/crowdstrike-social-graphic.png"
 For example:
 
 ```sql
-TBD
-```
-
-```
-TBD
+select
+  created_timestamp,
+  host_info -> 'hostname' AS hostname,
+  status
+from
+  crowdstrike_spotlight_vulnerability
+where
+  created_timestamp > (now() - interval '15days')
 ```
 
 ## Documentation
