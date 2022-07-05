@@ -15,7 +15,7 @@ import (
 func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "crowdstrike_intel_actor",
-		Description: "Threat intelligence actors.",
+		Description: "A threat actor, also known as a malicious actor, is any person or organization that intentionally causes harm in the digital sphere.",
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("id"),
 			Hydrate:    getCrowdStrikeIntelActor,
@@ -78,7 +78,7 @@ func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
 			{Name: "last_modified_date", Description: "Date when this actor was last modified.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("LastModifiedDate").Transform(int642TimestampTransformer)},
 			{Name: "motivations", Description: "The actor's motivations.", Type: proto.ColumnType_JSON},
 			{Name: "name", Description: "The actor's name.", Type: proto.ColumnType_STRING},
-			{Name: "notify_users", Description: "Notified users.", Type: proto.ColumnType_BOOL},
+			{Name: "notify_users", Description: "True if users have been notified.", Type: proto.ColumnType_BOOL},
 			{Name: "origins", Description: "The actor's country of origin.", Type: proto.ColumnType_JSON},
 			{Name: "region", Description: "The actor's region.", Type: proto.ColumnType_JSON},
 			{Name: "rich_text_description", Description: "A rich text description of the actor.", Type: proto.ColumnType_STRING},
