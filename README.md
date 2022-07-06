@@ -20,7 +20,14 @@ steampipe plugin install crowdstrike
 Run a query:
 
 ```sql
-TBD
+select
+  created_timestamp,
+  host_info -> 'hostname' AS hostname,
+  status
+from
+  crowdstrike_spotlight_vulnerability
+where
+  created_timestamp > (now() - interval '15 days');
 ```
 
 ## Developing
