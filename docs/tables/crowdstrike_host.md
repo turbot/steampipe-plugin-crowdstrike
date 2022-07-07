@@ -25,10 +25,10 @@ select
 from
   crowdstrike_host
 where
-  last_login_timestamp < (current_date - interval '3 months');
+  last_login_timestamp < current_date - interval '3 months';
 ```
 
-### List hosts which have atleast one `prevention` policy applied
+### List hosts which have at least one `prevention` policy applied
 
 ```sql
 select
@@ -50,10 +50,10 @@ select
 from
   crowdstrike_host
 where
-  (device_policies -> 'firewall' -> 'applied')::bool = true;
+  (device_policies -> 'firewall' -> 'applied')::bool = false;
 ```
 
-### List hosts which are operating in `reduced_functionality_mode`
+### List hosts which are operating in reduced functionality mode
 
 ```sql
 select
@@ -65,7 +65,7 @@ where
   reduced_functionality_mode = 'yes';
 ```
 
-### List hosts which are known to have critical `open` vulnerabilities
+### List hosts which are known to have critical open vulnerabilities
 
 ```sql
 select

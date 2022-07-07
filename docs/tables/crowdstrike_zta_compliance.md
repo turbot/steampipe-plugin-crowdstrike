@@ -1,6 +1,6 @@
 # Table: crowdstrike_zta_compliance
 
-Summarizes ZeroTrust Assessment data.
+Summarizes Zero Trust Assessment data.
 
 ## Examples
 
@@ -8,7 +8,8 @@ Summarizes ZeroTrust Assessment data.
 
 ```sql
 select
-  average_overall_score.num_aids,
+  average_overall_score,
+  num_aids,
   platforms
 from
   crowdstrike_zta_compliance

@@ -13,10 +13,10 @@ select
   assessment,
   event_platform
 from
-  crowdstrike_zta_assessment
+  crowdstrike_zta_assessment;
 ```
 
-### List ZeroTrust assessments with assessment score over a threshold
+### List Zero Trust assessments with assessment score over a threshold
 
 ```sql
 select
@@ -28,7 +28,7 @@ select
 from
   crowdstrike_zta_assessment
 where
-  (assessment ->> 'overall')::int > 92
+  (assessment ->> 'overall')::int > 92;
 ```
 
 ### List device IDs with firewalls disabled

@@ -1,6 +1,6 @@
 # Table: crowdstrike_user
 
-Users in the Falcon system.
+Users can be assigned permissions through roles.
 
 ## Examples
 

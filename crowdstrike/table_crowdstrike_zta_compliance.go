@@ -12,15 +12,15 @@ import (
 func tableCrowdStrikeZtaCompliance(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "crowdstrike_zta_compliance",
-		Description: "ZeroTrust Compliance.",
+		Description: "Zero Trust Compliance.",
 		List: &plugin.ListConfig{
 			Hydrate: listCrowdStrikeZtaCompliance,
 		},
 		Columns: []*plugin.Column{
 			{Name: "cid", Description: "The Customer ID.", Type: proto.ColumnType_STRING},
 			{Name: "average_overall_score", Description: "Average overall score of this compliance.", Type: proto.ColumnType_DOUBLE},
-			{Name: "num_aids", Description: "Number of ZeroTrust assessments.", Type: proto.ColumnType_INT},
-			{Name: "platforms", Description: "ZeroTrust compliance information by platform.", Type: proto.ColumnType_JSON},
+			{Name: "num_aids", Description: "Number of Zero Trust assessments.", Type: proto.ColumnType_INT},
+			{Name: "platforms", Description: "Zero Trust compliance information by platform.", Type: proto.ColumnType_JSON},
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Cid")},
 		},

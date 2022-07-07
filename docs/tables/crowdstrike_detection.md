@@ -36,7 +36,7 @@ where
   created_timestamp > current_date - interval '3 months';
 ```
 
-### List detections with a `severity` more than a threshold
+### List detections with a `severity` over a threshold
 
 ```sql
 select
@@ -50,7 +50,7 @@ select
 from
   crowdstrike_detection
 where
-  max_severity = 50;
+  max_severity > 50;
 ```
 
 ### List detections in devices which belong to a network
@@ -103,7 +103,7 @@ from
   crowdstrike_detection
 where
   status = 'open'
-  and now() - created_timestamp > interval '4days';
+  and now() - created_timestamp > interval '4 days';
 ```
 
 ### Get a specific detection

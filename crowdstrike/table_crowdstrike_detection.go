@@ -16,10 +16,10 @@ import (
 
 func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "crowdstrike_detect",
+		Name:        "crowdstrike_detection",
 		Description: "Detections are events identified by Falcon sensors on the hosts in your environment.",
 		List: &plugin.ListConfig{
-			Hydrate: listCrowdStrikeDetects,
+			Hydrate: listCrowdStrikeDetections,
 			KeyColumns: []*plugin.KeyColumn{
 				{
 					Name:      "created_timestamp",
@@ -60,7 +60,7 @@ func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 		},
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("detection_id"),
-			Hydrate:    getCrowdStrikeDetect,
+			Hydrate:    getCrowdStrikeDetection,
 		},
 		Columns: []*plugin.Column{
 			{Name: "adversary_ids", Description: "If behaviors or indicators in a detection are attributed to an adversary that is tracked by CrowdStrike Falcon Intelligence, those adversaries will have an ID associated with them. These IDs are found in a detection's metadata which can be viewed using the Detection Details API.", Type: proto.ColumnType_JSON, Transform: transform.FromJSONTag()},
@@ -93,11 +93,11 @@ func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCrowdStrikeDetections(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 
 	client, err := getCrowdStrikeClient(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "connection_error", err)
+		plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "connection_error", err)
 		return nil, err
 	}
 
@@ -125,11 +125,11 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 		})
 
 		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "query_error", err)
+			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "query_error", err)
 			return nil, err
 		}
 		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetects", "assert_error", err)
+			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "assert_error", err)
 			return nil, err
 		}
 
@@ -160,10 +160,10 @@ func listCrowdStrikeDetects(ctx context.Context, d *plugin.QueryData, h *plugin.
 	return nil, nil
 }
 
-func getCrowdStrikeDetect(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCrowdStrikeDetection(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	client, err := getCrowdStrikeClient(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetect", "connection_error", err)
+		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetection", "connection_error", err)
 		return nil, err
 	}
 
@@ -172,7 +172,7 @@ func getCrowdStrikeDetect(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	detect, err := getDetectsByIds(ctx, client, []string{detectId})
 
 	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetect", "GetDetectSummaries error", err)
+		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetection", "GetDetectSummaries error", err)
 		return nil, err
 	}
 

@@ -1,6 +1,6 @@
 # Table: crowdstrike_intel_actor
 
-With the Actors API, Falcon Intel subscribers can search for data about actors that CrowdStrike is tracking.
+A threat actor, also known as a malicious actor, is any person or organization that intentionally causes harm in the digital sphere.
 
 ## Examples
 
@@ -27,7 +27,7 @@ select
 from
   crowdstrike_intel_actor
 where
-  last_activity_date > (current_date - (interval '3months'));
+  last_activity_date > current_date - interval '3 months';
 ```
 
 ### List actors from a specific origin

@@ -21,7 +21,7 @@ type ztaAssesmentStruct struct {
 func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "crowdstrike_zta_assessment",
-		Description: "ZeroTrust Assessments.",
+		Description: "Zero Trust Assessments.",
 		List: &plugin.ListConfig{
 			Hydrate:       listCrowdStrikeZtaAssesment,
 			ParentHydrate: listCrowdStrikeHosts,
