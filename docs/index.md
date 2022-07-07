@@ -19,11 +19,14 @@ og_image: "/images/plugins/turbot/crowdstrike-social-graphic.png"
 For example:
 
 ```sql
-TBD
-```
-
-```
-TBD
+select
+  created_timestamp,
+  host_info -> 'hostname' AS hostname,
+  status
+from
+  crowdstrike_spotlight_vulnerability
+where
+  created_timestamp > now() - interval '15 days';
 ```
 
 ## Documentation
@@ -49,19 +52,22 @@ connection "crowdstrike" {
   plugin  = "crowdstrike"
 
   # CrowdStrike client ID
+  # Can also be set with the FALCON_CLIENT_ID environment variable
   # client_id = "4fe29d3fakeclientid"
 
   # CrowdStrike client secret
+  # Can also be set with the FALCON_CLIENT_SECRET environment variable
   # client_secret = "Z0F3MTfakesecret"
 
   # Falcon cloud (us-1, us-2, eu-1, us-gov-1)
+  # Can also be set with the FALCON_CLOUD environment variable
   # client_cloud = "us-2"
 }
 ```
 
-- `client_cloud` - (required) The Falcon cloud abbreviation (us-1, us-2, eu-1, us-gov-1).
-- `client_id` - (required) The client ID.
-- `client_secret` - (required) The client secret.
+- `client_cloud` - (Required) The Falcon cloud abbreviation (us-1, us-2, eu-1, us-gov-1). Can also be set with the `FALCON_CLOUD` environment variable.
+- `client_id` - (Required) The client ID. Can also be set with the `FALCON_CLIENT_ID` environment variable.
+- `client_secret` - (Required) The client secret. Can also be set with the `FALCON_CLIENT_SECRET` environment variable.
 
 ## Get involved
 
