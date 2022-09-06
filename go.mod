@@ -1,12 +1,12 @@
 module steampipe-plugin-crowdstrike
 
-go 1.18
+go 1.19
 
 require (
 	github.com/crowdstrike/gofalcon v0.2.21
 	github.com/go-openapi/strfmt v0.21.2
 	github.com/turbot/go-kit v0.4.0
-	github.com/turbot/steampipe-plugin-sdk/v3 v3.3.1
+	github.com/turbot/steampipe-plugin-sdk/v4 v3.3.1
 )
 
 require (
