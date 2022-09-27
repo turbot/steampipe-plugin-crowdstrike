@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-openapi/strfmt"
-	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
 func strfmtDatetimeTransformer(ctx context.Context, td *transform.TransformData) (interface{}, error) {

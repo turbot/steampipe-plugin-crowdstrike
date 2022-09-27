@@ -8,7 +8,7 @@ import (
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
 
-	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 )
 
 func getCrowdStrikeClient(ctx context.Context, d *plugin.QueryData) (*client.CrowdStrikeAPISpecification, error) {
