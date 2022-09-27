@@ -1,3 +1,10 @@
+## v0.1.0 [2022-09-27]
+
+_Dependencies_
+
+- Recompiled plugin with [steampipe-plugin-sdk v4.1.7](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v417-2022-09-08) which includes several caching and memory management improvements. ([#2](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/2))
+- Recompiled plugin with Go version `1.19`. ([#2](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/2))
+
 ## v0.0.1 [2022-07-07]
 
 Thanks to [@slartibastfast](https://github.com/slartibastfast) for all of his help making this plugin possible!
