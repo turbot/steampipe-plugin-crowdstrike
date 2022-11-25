@@ -6,7 +6,7 @@ require (
 	github.com/crowdstrike/gofalcon v0.2.21
 	github.com/go-openapi/strfmt v0.21.2
 	github.com/turbot/go-kit v0.4.0
-	github.com/turbot/steampipe-plugin-sdk/v4 v4.1.7
+	github.com/turbot/steampipe-plugin-sdk/v4 v4.1.8
 )
 
 require (
