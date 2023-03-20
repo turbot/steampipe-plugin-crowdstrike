@@ -7,9 +7,9 @@ import (
 	"github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/crowdstrike/gofalcon/falcon/client/hosts"
 	"github.com/crowdstrike/gofalcon/falcon/models"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 //// TABLE DEFINITION
@@ -141,7 +141,7 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 		}
 		for _, device := range devices {
 			d.StreamListItem(ctx, device)
-			if d.QueryStatus.RowsRemaining(ctx) < 1 {
+			if d.RowsRemaining(ctx) < 1 {
 				return nil, nil
 			}
 		}
@@ -170,7 +170,7 @@ func getCrowdStrikeHost(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 		return nil, err
 	}
 
-	deviceId := d.KeyColumnQuals["device_id"].GetStringValue()
+	deviceId := d.EqualsQuals["device_id"].GetStringValue()
 
 	return getDeviceByIdBatch(ctx, client, []string{deviceId})
 }

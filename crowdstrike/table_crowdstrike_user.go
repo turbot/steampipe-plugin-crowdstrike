@@ -7,9 +7,9 @@ import (
 	"github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/crowdstrike/gofalcon/falcon/client/user_management"
 	"github.com/crowdstrike/gofalcon/falcon/models"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableCrowdStrikeUser(_ context.Context) *plugin.Table {
@@ -62,7 +62,7 @@ func listCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 	for _, user := range userBatch {
 		d.StreamListItem(ctx, user)
-		if d.QueryStatus.RowsRemaining(ctx) < 1 {
+		if d.RowsRemaining(ctx) < 1 {
 			return nil, nil
 		}
 	}
@@ -102,7 +102,7 @@ func getCrowdStrikeUser(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 		return nil, err
 	}
 
-	userId := d.KeyColumnQuals["uid"].GetStringValue()
+	userId := d.EqualsQuals["uid"].GetStringValue()
 
 	u, err := getUsersByIds(ctx, client, []string{userId})
 	if err != nil {

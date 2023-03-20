@@ -7,9 +7,9 @@ import (
 	"github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/crowdstrike/gofalcon/falcon/client/detects"
 	"github.com/crowdstrike/gofalcon/falcon/models"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 //// TABLE DEFINITION
@@ -142,7 +142,7 @@ func listCrowdStrikeDetections(ctx context.Context, d *plugin.QueryData, h *plug
 
 		for _, detect := range detects {
 			d.StreamListItem(ctx, detect)
-			if d.QueryStatus.RowsRemaining(ctx) < 1 {
+			if d.RowsRemaining(ctx) < 1 {
 				return nil, nil
 			}
 		}
@@ -167,7 +167,7 @@ func getCrowdStrikeDetection(ctx context.Context, d *plugin.QueryData, h *plugin
 		return nil, err
 	}
 
-	detectId := d.KeyColumnQuals["detection_id"].GetStringValue()
+	detectId := d.EqualsQuals["detection_id"].GetStringValue()
 
 	detect, err := getDetectsByIds(ctx, client, []string{detectId})
 
