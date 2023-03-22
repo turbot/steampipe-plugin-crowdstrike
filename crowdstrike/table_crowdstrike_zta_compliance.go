@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/crowdstrike/gofalcon/falcon/client/zero_trust_assessment"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableCrowdStrikeZtaCompliance(_ context.Context) *plugin.Table {
@@ -50,7 +50,7 @@ func listCrowdStrikeZtaCompliance(ctx context.Context, d *plugin.QueryData, h *p
 
 	for _, dsp := range domainSignalProps {
 		d.StreamListItem(ctx, dsp)
-		if d.QueryStatus.RowsRemaining(ctx) < 1 {
+		if d.RowsRemaining(ctx) < 1 {
 			return nil, nil
 		}
 	}

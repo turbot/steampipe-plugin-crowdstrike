@@ -7,9 +7,9 @@ import (
 	"github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/crowdstrike/gofalcon/falcon/client/intel"
 	"github.com/crowdstrike/gofalcon/falcon/models"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableCrowdStrikeIntelActor(_ context.Context) *plugin.Table {
@@ -142,7 +142,7 @@ func listCrowdStrikeIntelActor(ctx context.Context, d *plugin.QueryData, h *plug
 		}
 		for _, actor := range actors {
 			d.StreamListItem(ctx, actor)
-			if d.QueryStatus.RowsRemaining(ctx) < 1 {
+			if d.RowsRemaining(ctx) < 1 {
 				return nil, nil
 			}
 		}
@@ -162,7 +162,7 @@ func getCrowdStrikeIntelActor(ctx context.Context, d *plugin.QueryData, h *plugi
 		return nil, err
 	}
 
-	detectId := d.KeyColumnQuals["id"].GetStringValue()
+	detectId := d.EqualsQuals["id"].GetStringValue()
 
 	detect, err := getIntelActorByIds(ctx, client, []string{detectId})
 
