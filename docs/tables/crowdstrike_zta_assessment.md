@@ -1,10 +1,20 @@
-# Table: crowdstrike_zta_assessment
+---
+title: "Steampipe Table: crowdstrike_zta_assessment - Query CrowdStrike Zero Trust Assessment using SQL"
+description: "Allows users to query Zero Trust Assessments in CrowdStrike, providing detailed information about the security posture of their organization's devices."
+---
 
-Zero Trust Assessment is a Falcon Insight feature that monitors the native OS security settings and applied sensor policies of Windows 10 and macOS endpoints to gauge the device security posture of managed assets within an organization. The metrics derived from these assessments can be used by IdP, NAC, and other solutions to provide additional data points around device health and security posture as part of their respective conditional access capabilities.
+# Table: crowdstrike_zta_assessment - Query CrowdStrike Zero Trust Assessment using SQL
+
+CrowdStrike's Zero Trust Assessment is a security feature that evaluates the trustworthiness of devices in an organization's network. It provides a comprehensive view of the security posture of each device, allowing security teams to identify and mitigate potential threats. This assessment is an integral part of CrowdStrike's proactive approach to cybersecurity.
+
+## Table Usage Guide
+
+The `crowdstrike_zta_assessment` table provides insights into the Zero Trust Assessments within CrowdStrike. As a cybersecurity professional, explore device-specific details through this table, including security scores, risk levels, and associated metadata. Utilize it to uncover information about the security posture of devices, such as those with high-risk scores, and to aid in the identification and mitigation of potential threats.
 
 ## Examples
 
 ### Basic info
+Explore the assessments and corresponding platforms for various devices to gain insights into the security status of your network. This is particularly useful in identifying potential weak spots and ensuring the robustness of your cybersecurity measures.
 
 ```sql
 select
@@ -17,6 +27,7 @@ from
 ```
 
 ### List Zero Trust assessments with assessment score over a threshold
+Analyze the Zero Trust assessments to identify devices with an assessment score exceeding a certain threshold. This can be useful in maintaining a high standard of network security by pinpointing devices that fall short.
 
 ```sql
 select
@@ -32,6 +43,7 @@ where
 ```
 
 ### List device IDs with firewalls disabled
+Explore which devices have their firewalls disabled to understand potential security vulnerabilities. This can help in identifying areas that need immediate attention to ensure optimal security measures.
 
 ```sql
 select
