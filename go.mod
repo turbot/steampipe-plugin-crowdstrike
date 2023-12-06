@@ -1,4 +1,4 @@
-module steampipe-plugin-crowdstrike
+module github.com/turbot/steampipe-plugin-crowdstrike
 
 go 1.21
 
