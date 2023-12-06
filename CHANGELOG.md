@@ -1,3 +1,9 @@
+## v0.3.2 [2023-12-06]
+
+_Bug fixes_
+
+- Fixed the invalid Go module path of the plugin. ([#27](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/27))
+
 ## v0.3.1 [2023-10-05]
 
 _Dependencies_
