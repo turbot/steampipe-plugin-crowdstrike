@@ -16,19 +16,28 @@ The `crowdstrike_user` table provides insights into user accounts within the Cro
 ### Basic info
 Explore which users are registered in the system, gaining insights into the scope of your user base. This can be beneficial in assessing the scale of your operations and identifying potential areas for user engagement or growth.
 
-```sql
+```sql+postgres
 select
   first_name,
   last_name,
   uid
 from
-  crowdstrike_user
+  crowdstrike_user;
+```
+
+```sql+sqlite
+select
+  first_name,
+  last_name,
+  uid
+from
+  crowdstrike_user;
 ```
 
 ### List users with specific roles
 Explore which users have been assigned specific roles such as 'custom_ioas_manager' or 'dashboard_admin'. This can be useful in managing user permissions and ensuring appropriate access controls are in place.
 
-```sql
+```sql+postgres
 select
   first_name,
   last_name,
@@ -36,5 +45,9 @@ select
 from
   crowdstrike_user
 where
-  roles ?| array['custom_ioas_manager', 'dashboard_admin']
+  roles ?| array['custom_ioas_manager', 'dashboard_admin'];
+```
+
+```sql+sqlite
+Error: SQLite does not support array operations and the '?' operator for JSON objects.
 ```

@@ -16,7 +16,17 @@ The `crowdstrike_zta_assessment` table provides insights into the security postu
 ### Basic info
 Explore the security posture of your devices by assessing their risk levels and the platforms they operate on.
 
-```sql
+```sql+postgres
+select
+  device_id,
+  aid,
+  assessment,
+  event_platform
+from
+  crowdstrike_zta_assessment;
+```
+
+```sql+sqlite
 select
   device_id,
   aid,
@@ -29,7 +39,7 @@ from
 ### List Zero Trust assessments with assessment score over a threshold
 Explore which Zero Trust assessments exceed a certain score threshold. This is useful for identifying devices that may require further investigation or action due to their high assessment scores.
 
-```sql
+```sql+postgres
 select
   device_id,
   aid,
@@ -42,10 +52,22 @@ where
   (assessment ->> 'overall')::int > 92;
 ```
 
+```sql+sqlite
+select
+  device_id,
+  aid,
+  assessment,
+  json_extract(assessment, '$.overall') as overall
+from
+  crowdstrike_zta_assessment
+where
+  CAST(json_extract(assessment, '$.overall') AS INT) > 92;
+```
+
 ### List device IDs with firewalls disabled
 Discover the segments that have their firewalls disabled, which allows you to identify potential security risks and take necessary actions to mitigate them. This is essential for maintaining the security integrity of your devices.
 
-```sql
+```sql+postgres
 select
   device_id,
   event_platform
@@ -54,5 +76,17 @@ from
   jsonb_array_elements(assessment_items -> 'os_signals') as t
 where
   t ->> 'signal_id' like 'application_firewall_%'
-  and t ->> 'meets_criteria' = 'no'
+  and t ->> 'meets_criteria' = 'no';
+```
+
+```sql+sqlite
+select
+  device_id,
+  event_platform
+from
+  crowdstrike_zta_assessment,
+  json_each(assessment_items, '$.os_signals') as t
+where
+  json_extract(t.value, '$.signal_id') like 'application_firewall_%'
+  and json_extract(t.value, '$.meets_criteria') = 'no';
 ```
