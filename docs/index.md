@@ -8,6 +8,7 @@ name: crowdstrike
 description: Steampipe plugin to query resources from CrowdStrike.
 og_description: Query CrowdStrike data with SQL! Open source CLI. No DB required.
 og_image: "/images/plugins/turbot/crowdstrike-social-graphic.png"
+engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
 # CrowdStrike + Steampipe
