@@ -1,22 +1,32 @@
 ---
-title: "Steampipe Table: crowdstrike_zta_assessment - Query CrowdStrike Zero Trust Assessment using SQL"
-description: "Allows users to query Zero Trust Assessments in CrowdStrike, providing detailed information about the security posture of their organization's devices."
+title: "Steampipe Table: crowdstrike_zta_assessment - Query CrowdStrike ZTA Assessments using SQL"
+description: "Allows users to query CrowdStrike ZTA Assessments, providing insights into the security posture of devices within an organization's network."
 ---
 
-# Table: crowdstrike_zta_assessment - Query CrowdStrike Zero Trust Assessment using SQL
+# Table: crowdstrike_zta_assessment - Query CrowdStrike ZTA Assessments using SQL
 
-CrowdStrike's Zero Trust Assessment is a security feature that evaluates the trustworthiness of devices in an organization's network. It provides a comprehensive view of the security posture of each device, allowing security teams to identify and mitigate potential threats. This assessment is an integral part of CrowdStrike's proactive approach to cybersecurity.
+CrowdStrike ZTA Assessments is a feature within CrowdStrike Falcon that provides a security posture assessment of devices within an organization's network. It uses Zero Trust principles to evaluate and report on the security risks associated with each device. These assessments can help organizations identify vulnerabilities and enforce security policies.
 
 ## Table Usage Guide
 
-The `crowdstrike_zta_assessment` table provides insights into the Zero Trust Assessments within CrowdStrike. As a cybersecurity professional, explore device-specific details through this table, including security scores, risk levels, and associated metadata. Utilize it to uncover information about the security posture of devices, such as those with high-risk scores, and to aid in the identification and mitigation of potential threats.
+The `crowdstrike_zta_assessment` table provides insights into the security posture of devices within an organization's network using CrowdStrike Falcon. As a security analyst or IT administrator, explore device-specific details through this table, including security risks and vulnerabilities. Utilize it to uncover information about the security posture of each device, helping to identify potential security risks and enforce security policies.
 
 ## Examples
 
 ### Basic info
-Explore the assessments and corresponding platforms for various devices to gain insights into the security status of your network. This is particularly useful in identifying potential weak spots and ensuring the robustness of your cybersecurity measures.
+Explore the security posture of your devices by assessing their risk levels and the platforms they operate on.
 
-```sql
+```sql+postgres
+select
+  device_id,
+  aid,
+  assessment,
+  event_platform
+from
+  crowdstrike_zta_assessment;
+```
+
+```sql+sqlite
 select
   device_id,
   aid,
@@ -27,9 +37,9 @@ from
 ```
 
 ### List Zero Trust assessments with assessment score over a threshold
-Analyze the Zero Trust assessments to identify devices with an assessment score exceeding a certain threshold. This can be useful in maintaining a high standard of network security by pinpointing devices that fall short.
+Explore which Zero Trust assessments exceed a certain score threshold. This is useful for identifying devices that may require further investigation or action due to their high assessment scores.
 
-```sql
+```sql+postgres
 select
   device_id,
   aid,
@@ -42,10 +52,23 @@ where
   (assessment ->> 'overall')::int > 92;
 ```
 
-### List device IDs with firewalls disabled
-Explore which devices have their firewalls disabled to understand potential security vulnerabilities. This can help in identifying areas that need immediate attention to ensure optimal security measures.
+```sql+sqlite
+select
+  device_id,
+  aid,
+  assessment,
+  event_platform,
+  json_extract(assessment, '$.overall') as overall
+from
+  crowdstrike_zta_assessment
+where
+  cast(json_extract(assessment, '$.overall') as integer) > 92;
+```
 
-```sql
+### List device IDs with firewalls disabled
+Discover the segments that have their firewalls disabled, which allows you to identify potential security risks and take necessary actions to mitigate them. This is essential for maintaining the security integrity of your devices.
+
+```sql+postgres
 select
   device_id,
   event_platform
@@ -55,4 +78,16 @@ from
 where
   t ->> 'signal_id' like 'application_firewall_%'
   and t ->> 'meets_criteria' = 'no'
+```
+
+```sql+sqlite
+select
+  device_id,
+  event_platform
+from
+  crowdstrike_zta_assessment,
+  json_each(assessment_items, '$.os_signals') as t
+where
+  json_extract(t.value, '$.signal_id') like 'application_firewall_%'
+  and json_extract(t.value, '$.meets_criteria') = 'no'
 ```

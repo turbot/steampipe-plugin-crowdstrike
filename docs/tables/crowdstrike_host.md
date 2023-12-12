@@ -1,22 +1,31 @@
 ---
 title: "Steampipe Table: crowdstrike_host - Query CrowdStrike Hosts using SQL"
-description: "Allows users to query CrowdStrike Hosts, specifically providing details about the host's ID, hostname, and associated metadata."
+description: "Allows users to query CrowdStrike Hosts, specifically the host details, providing insights into host security posture and potential vulnerabilities."
 ---
 
 # Table: crowdstrike_host - Query CrowdStrike Hosts using SQL
 
-CrowdStrike Hosts is a resource within CrowdStrike that provides a comprehensive view of the hosts within a network. It offers information about the host's ID, hostname, and other associated metadata. This information is crucial in understanding the state and security of the hosts within a network.
+CrowdStrike is a cybersecurity technology company that offers endpoint protection, threat intelligence, and cyberattack response services. It provides a cloud-native endpoint security platform combines Next-Gen Av, EDR, and managed hunting services into a single solution. With CrowdStrike, organizations can prevent cyberattacks, detect malicious activities, respond to security incidents, and forecast future threats.
 
 ## Table Usage Guide
 
-The `crowdstrike_host` table provides insights into the hosts within CrowdStrike. As a cybersecurity analyst, you can explore host-specific details through this table, including the host's ID, hostname, and associated metadata. Utilize it to uncover information about hosts, such as their state, security details, and other related information.
+The `crowdstrike_host` table offers insights into the hosts within CrowdStrike's cybersecurity technology. As a cybersecurity analyst, you can delve into host-specific details through this table, including the host's ID, hostname, and status. This table can be utilized to uncover crucial information about hosts, such as their current security posture, potential vulnerabilities, and the overall threat landscape.
 
 ## Examples
 
 ### Basic info
-Explore which instances have been accessed recently by analyzing the last login timestamp. This can help in identifying unusual activity or assessing the usage patterns of your system.
+Explore which instances have recently been accessed by reviewing the last login timestamp. This can be useful for monitoring activity and identifying potential unauthorized access.
 
-```sql
+```sql+postgres
+select
+  instance_id,
+  hostname,
+  last_login_timestamp
+from
+  crowdstrike_host;
+```
+
+```sql+sqlite
 select
   instance_id,
   hostname,
@@ -26,9 +35,9 @@ from
 ```
 
 ### List hosts which have been inactive for the last 3 months
-Explore which hosts have been inactive in the past three months. This can be used to identify potential security risks or unnecessary resources that could be decommissioned to save costs.
+Uncover the details of hosts that have not been active in the past three months. This is useful for identifying potential security risks or for optimizing resource allocation.
 
-```sql
+```sql+postgres
 select
   instance_id,
   hostname,
@@ -39,10 +48,21 @@ where
   last_login_timestamp < current_date - interval '3 months';
 ```
 
-### List hosts which have at least one `prevention` policy applied
-Gain insights into the systems where at least one preventative measure has been applied, which can help in understanding the security measures taken and identifying areas that may need additional protection.
+```sql+sqlite
+select
+  instance_id,
+  hostname,
+  last_login_timestamp
+from
+  crowdstrike_host
+where
+  last_login_timestamp < date('now','-3 months');
+```
 
-```sql
+### List hosts which have at least one `prevention` policy applied
+Explore which hosts have at least one prevention policy applied to them. This is useful for identifying areas where proactive measures are being taken to prevent potential security threats.
+
+```sql+postgres
 select
   hostname,
   policies
@@ -53,10 +73,21 @@ where
   t ->> 'policy_type' = 'prevention';
 ```
 
-### List hosts which do not have `firewall` applied
-Explore which hosts lack a firewall application, enabling you to identify potential vulnerabilities and enhance your system's security measures.
+```sql+sqlite
+select
+  hostname,
+  policies
+from
+  crowdstrike_host,
+  json_each(policies) as t
+where
+  json_extract(t.value, '$.policy_type') = 'prevention';
+```
 
-```sql
+### List hosts which do not have `firewall` applied
+Uncover the details of hosts that lack a firewall application, allowing for enhanced security management and potential risk mitigation.
+
+```sql+postgres
 select
   hostname,
   device_policies
@@ -66,10 +97,30 @@ where
   (device_policies -> 'firewall' -> 'applied')::bool = false;
 ```
 
-### List hosts which are operating in reduced functionality mode
-Discover the segments that are operating in a reduced functionality mode. This is useful to identify areas where performance may be impacted and to plan for necessary upgrades or troubleshooting.
+```sql+sqlite
+select
+  hostname,
+  device_policies
+from
+  crowdstrike_host
+where
+  json_extract(json_extract(device_policies, '$.firewall'), '$.applied') = 'false';
+```
 
-```sql
+### List hosts which are operating in reduced functionality mode
+Identify instances where certain hosts are operating in a reduced functionality mode. This can be useful in assessing the overall performance and efficiency of your network.
+
+```sql+postgres
+select
+  hostname,
+  device_policies
+from
+  crowdstrike_host
+where
+  reduced_functionality_mode = 'yes';
+```
+
+```sql+sqlite
 select
   hostname,
   device_policies
@@ -80,9 +131,9 @@ where
 ```
 
 ### List hosts which are known to have critical open vulnerabilities
-This query helps to identify the hosts that are exposed to open critical vulnerabilities. In a practical scenario, this can be used to prioritize security measures and direct resources to protect the most vulnerable parts of your network.
+Discover the segments that have known critical vulnerabilities to better manage and mitigate potential security risks. This query is useful in identifying and prioritizing the hosts that require immediate attention, thereby enhancing your system's overall security posture.
 
-```sql
+```sql+postgres
 select
   vuln.host_info ->> 'hostname' as hostname,
   vuln.cve,
@@ -96,5 +147,22 @@ from
     on hosts.hostname = vuln.host_info ->> 'hostname'
 where
   vuln.cve ->> 'exprt_rating' = 'CRITICAL'
+  and vuln.status = 'open';
+```
+
+```sql+sqlite
+select
+  json_extract(vuln.host_info, '$.hostname') as hostname,
+  vuln.cve,
+  vuln.status as vuln_status,
+  hosts.email,
+  hosts.status as host_status
+from
+  crowdstrike_host hosts
+  left join
+    crowdstrike_spotlight_vulnerability as vuln
+    on hosts.hostname = json_extract(vuln.host_info, '$.hostname')
+where
+  json_extract(vuln.cve, '$.exprt_rating') = 'CRITICAL'
   and vuln.status = 'open';
 ```

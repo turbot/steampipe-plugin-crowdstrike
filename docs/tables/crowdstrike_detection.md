@@ -1,22 +1,22 @@
 ---
 title: "Steampipe Table: crowdstrike_detection - Query CrowdStrike Detections using SQL"
-description: "Allows users to query CrowdStrike Detections, specifically details related to detection ID, status, and behavior. This provides insights into potential security threats and incidents."
+description: "Allows users to query CrowdStrike Detections, specifically the detection of threats and incidents across the CrowdStrike platform."
 ---
 
 # Table: crowdstrike_detection - Query CrowdStrike Detections using SQL
 
-CrowdStrike is a cybersecurity technology firm that provides endpoint security, threat intelligence, and cyberattack response services. It offers a cloud-native endpoint security platform that combines next-generation antivirus, endpoint detection and response (EDR), cyber threat intelligence, and proactive threat hunting. CrowdStrike's platform is designed to stop breaches by preventing and responding to all types of attacks.
+CrowdStrike Detections is a feature within the CrowdStrike Falcon platform that identifies potential threats and incidents. It uses advanced AI and indicator-of-compromise (IOC) sweeps to detect malicious activities and behaviors. CrowdStrike Detections provide detailed information about the threat, including the threat family, tactics, techniques, and procedures (TTPs), allowing for a comprehensive understanding of the threat landscape.
 
 ## Table Usage Guide
 
-The `crowdstrike_detection` table provides insights into potential security threats and incidents within CrowdStrike's endpoint security platform. As a cybersecurity analyst, explore detection-specific details through this table, including detection ID, status, and behavior. Utilize it to uncover information about threats, such as their current status, associated behaviors, and the capabilities to respond to these threats.
+The `crowdstrike_detection` table provides insights into threat detections within the CrowdStrike Falcon platform. As a cybersecurity analyst, use this table to explore detailed information about detected threats, including their tactics, techniques, and procedures. Leverage it to gain a comprehensive understanding of the threat landscape, identify potential vulnerabilities, and enhance your organization's security posture.
 
 ## Examples
 
 ### Basic info
-Explore which devices have reported detections, including details such as the platform and operating system. This can assist in understanding the scope of potential security threats and their distribution across different systems.
+Explore which detections were made in your system, when they were identified, and the devices they originated from. This is particularly useful for understanding the security landscape of your network and identifying potential vulnerabilities.
 
-```sql
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -29,10 +29,23 @@ from
   crowdstrike_detection;
 ```
 
-### List detections from the last 3 months
-Explore recent security detections to identify potential threats and vulnerabilities. This query is particularly useful for maintaining an up-to-date understanding of your system's security landscape over the past three months.
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection;
+```
 
-```sql
+### List detections from the last 3 months
+Explore recent security detections to understand potential vulnerabilities. This query is useful in identifying threats to your system over the past three months, helping to enhance your cybersecurity measures.
+
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -47,10 +60,25 @@ where
   created_timestamp > current_date - interval '3 months';
 ```
 
-### List detections with a `severity` over a threshold
-Assess the elements within the CrowdStrike database to identify any detections that have a severity level exceeding a certain threshold. This can be useful for prioritizing responses to potential threats based on their severity.
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  created_timestamp > date('now','-3 month');
+```
 
-```sql
+### List detections with a `severity` over a threshold
+Explore which detections exceed a certain severity level to prioritize your security response. This is particularly useful in large systems where managing and responding to all detections may be overwhelming.
+
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -65,10 +93,25 @@ where
   max_severity > 50;
 ```
 
-### List detections in devices which belong to a network
-Explore which detections have occurred on devices within a specific network. This can be useful for identifying potential security threats or breaches within that network.
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  max_severity > 50;
+```
 
-```sql
+### List detections in devices which belong to a network
+Explore which detections are linked to devices within a specific network to manage security threats effectively. This is useful in identifying potential vulnerabilities or breaches within a particular network segment.
+
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -84,10 +127,14 @@ where
   network((device ->> 'external_ip')::INET) = '119.18.0.0/28';
 ```
 
-### List open detections
-Discover the segments that have open detections in the CrowdStrike system to understand potential security threats. This allows for proactive management of vulnerabilities and ensures prompt action can be taken to address them.
+```sql+sqlite
+Error: SQLite does not support CIDR operations.
+```
 
-```sql
+### List open detections
+Identify instances where security threats remain unresolved. This query helps in monitoring and managing potential risks by pinpointing open detections in your system.
+
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -102,10 +149,25 @@ where
   status = 'open';
 ```
 
-### List open detections from the last 4 days
-Explore recent open detections to identify potential security threats. This query is particularly useful for quickly assessing and responding to incidents that have occurred within the last four days.
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  status = 'open';
+```
 
-```sql
+### List open detections from the last 4 days
+Determine the areas in which open detections have occurred in the past four days, which can help in identifying potential security threats and ensuring timely response to the same.
+
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -121,10 +183,26 @@ where
   and now() - created_timestamp > interval '4 days';
 ```
 
-### Get a specific detection
-This query is useful for identifying a specific security threat in a system, including when it was created and its current status. It helps in understanding the threat landscape of a particular device by providing details about the device's platform and operating system.
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  status = 'open'
+  and julianday('now') - julianday(created_timestamp) > 4;
+```
 
-```sql
+### Get a specific detection
+Explore specific security detections by identifying the corresponding device details and status. This is beneficial in scenarios where you need to understand the security status of a particular device and its operating system.
+
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -132,6 +210,21 @@ select
   device ->> 'hostname' as hostname,
   device ->> 'platform_name' as platform_name,
   device ->> 'os_version' as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  detection_id = 'ldt:6f8d8xxxx5b44xxxxxxxxxxb04e0acfa:423017xxxxxxxxxx41';
+```
+
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
   status
 from
   crowdstrike_detection

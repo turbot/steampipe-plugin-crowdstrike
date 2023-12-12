@@ -1,22 +1,31 @@
 ---
-title: "Steampipe Table: crowdstrike_user - Query CrowdStrike Users using SQL"
-description: "Allows users to query CrowdStrike Users, providing insights into user profiles and their associated details within the CrowdStrike environment."
+title: "Steampipe Table: crowdstrike_user - Query Crowdstrike Users using SQL"
+description: "Allows users to query Crowdstrike Users, specifically user details such as user ID, email, name, created and last login times, providing insights into user activities and behaviors."
 ---
 
-# Table: crowdstrike_user - Query CrowdStrike Users using SQL
+# Table: crowdstrike_user - Query Crowdstrike Users using SQL
 
-CrowdStrike is a cybersecurity technology firm that offers endpoint security, threat intelligence, and cyberattack response services. It provides a cloud-native endpoint security platform which combines antivirus, threat intelligence, and cyberattack response functionalities. Users in CrowdStrike represent individuals who have access to the CrowdStrike Falcon platform and their profiles contain details such as email, first and last names, and roles.
+Crowdstrike is a cloud-native endpoint security platform that combines next-generation antivirus, endpoint detection and response (EDR), managed threat hunting, and threat intelligence. It uses artificial intelligence (AI) to analyze behavior on endpoints and networks, helping to stop breaches and mitigate threat activity. Crowdstrike Users are individual accounts within the Crowdstrike platform, each with their specific roles and permissions.
 
 ## Table Usage Guide
 
-The `crowdstrike_user` table provides insights into user profiles within CrowdStrike's endpoint security platform. As a security analyst, you can explore user-specific details through this table, including email addresses, names, and roles. Utilize it to uncover information about users, such as their access level, role assignment, and other associated details to improve your organization's security posture.
+The `crowdstrike_user` table provides insights into user accounts within the Crowdstrike platform. As a security analyst, explore user-specific details through this table, including user ID, email, name, and activity times. Utilize it to uncover information about user behaviors, such as login patterns, and to verify user roles and permissions.
 
 ## Examples
 
 ### Basic info
-Explore which users are registered in the system by identifying each one through their unique identifiers. This can be beneficial for managing user accounts and ensuring system security.
+Explore which users are registered in the system, gaining insights into the scope of your user base. This can be beneficial in assessing the scale of your operations and identifying potential areas for user engagement or growth.
 
-```sql
+```sql+postgres
+select
+  first_name,
+  last_name,
+  uid
+from
+  crowdstrike_user
+```
+
+```sql+sqlite
 select
   first_name,
   last_name,
@@ -26,9 +35,9 @@ from
 ```
 
 ### List users with specific roles
-Discover the segments of users who have been assigned specific roles such as 'custom_ioas_manager' or 'dashboard_admin'. This is particularly useful for managing user permissions and ensuring the right individuals have access to the correct roles.
+Explore which users have been assigned specific roles such as 'custom_ioas_manager' or 'dashboard_admin'. This can be useful in managing user permissions and ensuring appropriate access controls are in place.
 
-```sql
+```sql+postgres
 select
   first_name,
   last_name,
@@ -37,4 +46,8 @@ from
   crowdstrike_user
 where
   roles ?| array['custom_ioas_manager', 'dashboard_admin']
+```
+
+```sql+sqlite
+Error: SQLite does not support array operations and the '?' operator used in PostgreSQL.
 ```

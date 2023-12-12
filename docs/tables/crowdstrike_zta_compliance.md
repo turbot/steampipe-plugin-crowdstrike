@@ -1,22 +1,31 @@
 ---
-title: "Steampipe Table: crowdstrike_zta_compliance - Query CrowdStrike Zero Trust Assessment Compliance using SQL"
-description: "Allows users to query Zero Trust Assessment Compliance in CrowdStrike, providing insights into the compliance status of each device and potential security risks."
+title: "Steampipe Table: crowdstrike_zta_compliance - Query CrowdStrike Zero Trust Assessment Compliances using SQL"
+description: "Allows users to query CrowdStrike Zero Trust Assessment Compliances, specifically the compliance of each device with the CrowdStrike security standards."
 ---
 
-# Table: crowdstrike_zta_compliance - Query CrowdStrike Zero Trust Assessment Compliance using SQL
+# Table: crowdstrike_zta_compliance - Query CrowdStrike Zero Trust Assessment Compliances using SQL
 
-CrowdStrike Zero Trust Assessment (ZTA) Compliance is a feature within the CrowdStrike platform that provides a detailed assessment of each device's compliance status. It helps organizations understand their security posture by identifying devices that may pose a potential risk due to non-compliance with security policies. ZTA Compliance enables organizations to take proactive measures to ensure the security of their devices and data.
+CrowdStrike Zero Trust Assessment (ZTA) is a security model that requires strict identity verification for every person and device trying to access resources on a private network, regardless of whether they are sitting within or outside of the network perimeter. CrowdStrike ZTA ensures that only authenticated and authorized users and devices can access applications and data. It minimizes the risk of attackers gaining access and moving laterally within the network.
 
 ## Table Usage Guide
 
-The `crowdstrike_zta_compliance` table provides insights into each device's compliance status within CrowdStrike Zero Trust Assessment. As a security analyst, you can use this table to understand the compliance status of each device, identify potential security risks, and take necessary actions to mitigate these risks. This table is instrumental in maintaining a strong security posture by ensuring all devices comply with your organization's security policies.
+The `crowdstrike_zta_compliance` table provides insights into device compliance with CrowdStrike's Zero Trust Assessment. As a security engineer, explore device-specific details through this table, including compliance status, device ID, and associated metadata. Utilize it to uncover information about device compliance, such as those not meeting CrowdStrike's security standards, and to verify the security posture of each device.
 
 ## Examples
 
 ### Basic info
-Gain insights into the average security score across your digital assets, the number of aids associated, and the platforms they are on, to better understand your cybersecurity landscape and compliance status. This can help identify potential vulnerabilities and areas for improvement.
+Explore the average security score and the number of aids across different platforms. This analysis is useful for understanding the overall security compliance in your system.
 
-```sql
+```sql+postgres
+select
+  average_overall_score,
+  num_aids,
+  platforms
+from
+  crowdstrike_zta_compliance
+```
+
+```sql+sqlite
 select
   average_overall_score,
   num_aids,
@@ -26,9 +35,9 @@ from
 ```
 
 ### List compliance information per platform
-Determine the areas in which compliance is being maintained across different operating platforms. This query is useful for understanding the overall security posture and number of assessments conducted on each platform.
+Explore compliance information for each operating system platform, understanding the average overall score and the number of assessments conducted. This can be useful in assessing the security posture and risk management across different platforms.
 
-```sql
+```sql+postgres
 select
   p ->> 'name' as os_platform,
   p ->> 'average_overall_score' as overall_zta_score,
@@ -36,4 +45,14 @@ select
 from
   crowdstrike_zta_compliance,
   jsonb_array_elements(platforms) as p
+```
+
+```sql+sqlite
+select
+  json_extract(p.value, '$.name') as os_platform,
+  json_extract(p.value, '$.average_overall_score') as overall_zta_score,
+  json_extract(p.value, '$.num_aids') as no_of_assessments
+from
+  crowdstrike_zta_compliance,
+  json_each(platforms) as p
 ```
