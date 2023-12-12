@@ -8,11 +8,12 @@ name: crowdstrike
 description: Steampipe plugin to query resources from CrowdStrike.
 og_description: Query CrowdStrike data with SQL! Open source CLI. No DB required.
 og_image: "/images/plugins/turbot/crowdstrike-social-graphic.png"
+engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
 # CrowdStrike + Steampipe
 
-[Steampipe](https://steampipe.io) is an open source CLI to instantly query cloud APIs using SQL.
+[Steampipe](https://steampipe.io) is an open-source zero-ETL engine to instantly query cloud APIs using SQL.
 
 [CrowdStrike](https://crowdstrike.com) provides cloud workload and endpoint security, threat intelligence, and cyberattack response services.
 
@@ -68,8 +69,3 @@ connection "crowdstrike" {
 - `client_cloud` - (Required) The Falcon cloud abbreviation (us-1, us-2, eu-1, us-gov-1). Can also be set with the `FALCON_CLOUD` environment variable.
 - `client_id` - (Required) The client ID. Can also be set with the `FALCON_CLIENT_ID` environment variable.
 - `client_secret` - (Required) The client secret. Can also be set with the `FALCON_CLIENT_SECRET` environment variable.
-
-## Get involved
-
-- Open source: https://github.com/turbot/steampipe-plugin-crowdstrike
-- Community: [Join #steampipe on Slack →](https://turbot.com/community/join)

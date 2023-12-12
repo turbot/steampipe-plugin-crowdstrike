@@ -16,7 +16,7 @@ The `crowdstrike_detection` table provides insights into threat detections withi
 ### Basic info
 Explore which detections were made in your system, when they were identified, and the devices they originated from. This is particularly useful for understanding the security landscape of your network and identifying potential vulnerabilities.
 
-```sql
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -29,10 +29,23 @@ from
   crowdstrike_detection;
 ```
 
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection;
+```
+
 ### List detections from the last 3 months
 Explore recent security detections to understand potential vulnerabilities. This query is useful in identifying threats to your system over the past three months, helping to enhance your cybersecurity measures.
 
-```sql
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -47,10 +60,25 @@ where
   created_timestamp > current_date - interval '3 months';
 ```
 
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  created_timestamp > date('now','-3 month');
+```
+
 ### List detections with a `severity` over a threshold
 Explore which detections exceed a certain severity level to prioritize your security response. This is particularly useful in large systems where managing and responding to all detections may be overwhelming.
 
-```sql
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -65,10 +93,25 @@ where
   max_severity > 50;
 ```
 
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  max_severity > 50;
+```
+
 ### List detections in devices which belong to a network
 Explore which detections are linked to devices within a specific network to manage security threats effectively. This is useful in identifying potential vulnerabilities or breaches within a particular network segment.
 
-```sql
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -84,10 +127,14 @@ where
   network((device ->> 'external_ip')::INET) = '119.18.0.0/28';
 ```
 
+```sql+sqlite
+Error: SQLite does not support CIDR operations.
+```
+
 ### List open detections
 Identify instances where security threats remain unresolved. This query helps in monitoring and managing potential risks by pinpointing open detections in your system.
 
-```sql
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -102,10 +149,25 @@ where
   status = 'open';
 ```
 
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  status = 'open';
+```
+
 ### List open detections from the last 4 days
 Determine the areas in which open detections have occurred in the past four days, which can help in identifying potential security threats and ensuring timely response to the same.
 
-```sql
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -121,10 +183,26 @@ where
   and now() - created_timestamp > interval '4 days';
 ```
 
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  status = 'open'
+  and julianday('now') - julianday(created_timestamp) > 4;
+```
+
 ### Get a specific detection
 Explore specific security detections by identifying the corresponding device details and status. This is beneficial in scenarios where you need to understand the security status of a particular device and its operating system.
 
-```sql
+```sql+postgres
 select
   detection_id,
   created_timestamp,
@@ -132,6 +210,21 @@ select
   device ->> 'hostname' as hostname,
   device ->> 'platform_name' as platform_name,
   device ->> 'os_version' as os_version,
+  status
+from
+  crowdstrike_detection
+where
+  detection_id = 'ldt:6f8d8xxxx5b44xxxxxxxxxxb04e0acfa:423017xxxxxxxxxx41';
+```
+
+```sql+sqlite
+select
+  detection_id,
+  created_timestamp,
+  json_extract(device, '$.device_id') as device_id,
+  json_extract(device, '$.hostname') as hostname,
+  json_extract(device, '$.platform_name') as platform_name,
+  json_extract(device, '$.os_version') as os_version,
   status
 from
   crowdstrike_detection

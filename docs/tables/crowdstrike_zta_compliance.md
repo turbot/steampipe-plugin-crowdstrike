@@ -16,24 +16,43 @@ The `crowdstrike_zta_compliance` table provides insights into device compliance 
 ### Basic info
 Explore the average security score and the number of aids across different platforms. This analysis is useful for understanding the overall security compliance in your system.
 
-```sql
+```sql+postgres
 select
   average_overall_score,
   num_aids,
   platforms
 from
-  crowdstrike_zta_compliance
+  crowdstrike_zta_compliance;
+```
+
+```sql+sqlite
+select
+  average_overall_score,
+  num_aids,
+  platforms
+from
+  crowdstrike_zta_compliance;
 ```
 
 ### List compliance information per platform
 Explore compliance information for each operating system platform, understanding the average overall score and the number of assessments conducted. This can be useful in assessing the security posture and risk management across different platforms.
 
-```sql
+```sql+postgres
 select
   p ->> 'name' as os_platform,
   p ->> 'average_overall_score' as overall_zta_score,
   p ->> 'num_aids' as no_of_assessments
 from
   crowdstrike_zta_compliance,
-  jsonb_array_elements(platforms) as p
+  jsonb_array_elements(platforms) as p;
+```
+
+```sql+sqlite
+select
+  json_extract(p.value, '$.name') as os_platform,
+  json_extract(p.value, '$.average_overall_score') as overall_zta_score,
+  json_extract(p.value, '$.num_aids') as no_of_assessments
+from
+  crowdstrike_zta_compliance,
+  json_each(platforms) as p;
 ```
