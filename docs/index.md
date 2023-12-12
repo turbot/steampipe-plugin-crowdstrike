@@ -13,7 +13,7 @@ engines: ["steampipe", "sqlite", "postgres", "export"]
 
 # CrowdStrike + Steampipe
 
-[Steampipe](https://steampipe.io) is an open source CLI to instantly query cloud APIs using SQL.
+[Steampipe](https://steampipe.io) is an open-source zero-ETL engine to instantly query cloud APIs using SQL.
 
 [CrowdStrike](https://crowdstrike.com) provides cloud workload and endpoint security, threat intelligence, and cyberattack response services.
 
