@@ -22,7 +22,7 @@ select
   num_aids,
   platforms
 from
-  crowdstrike_zta_compliance
+  crowdstrike_zta_compliance;
 ```
 
 ```sql+sqlite
@@ -31,7 +31,7 @@ select
   num_aids,
   platforms
 from
-  crowdstrike_zta_compliance
+  crowdstrike_zta_compliance;
 ```
 
 ### List compliance information per platform
@@ -44,7 +44,7 @@ select
   p ->> 'num_aids' as no_of_assessments
 from
   crowdstrike_zta_compliance,
-  jsonb_array_elements(platforms) as p
+  jsonb_array_elements(platforms) as p;
 ```
 
 ```sql+sqlite
@@ -54,5 +54,5 @@ select
   json_extract(p.value, '$.num_aids') as no_of_assessments
 from
   crowdstrike_zta_compliance,
-  json_each(platforms) as p
+  json_each(platforms) as p;
 ```
