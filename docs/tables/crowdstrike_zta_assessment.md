@@ -77,7 +77,7 @@ from
   jsonb_array_elements(assessment_items -> 'os_signals') as t
 where
   t ->> 'signal_id' like 'application_firewall_%'
-  and t ->> 'meets_criteria' = 'no'
+  and t ->> 'meets_criteria' = 'no';
 ```
 
 ```sql+sqlite
@@ -89,5 +89,5 @@ from
   json_each(assessment_items, '$.os_signals') as t
 where
   json_extract(t.value, '$.signal_id') like 'application_firewall_%'
-  and json_extract(t.value, '$.meets_criteria') = 'no'
+  and json_extract(t.value, '$.meets_criteria') = 'no';
 ```
