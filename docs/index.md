@@ -69,8 +69,3 @@ connection "crowdstrike" {
 - `client_cloud` - (Required) The Falcon cloud abbreviation (us-1, us-2, eu-1, us-gov-1). Can also be set with the `FALCON_CLOUD` environment variable.
 - `client_id` - (Required) The client ID. Can also be set with the `FALCON_CLIENT_ID` environment variable.
 - `client_secret` - (Required) The client secret. Can also be set with the `FALCON_CLIENT_SECRET` environment variable.
-
-## Get involved
-
-- Open source: https://github.com/turbot/steampipe-plugin-crowdstrike
-- Community: [Join #steampipe on Slack →](https://turbot.com/community/join)
