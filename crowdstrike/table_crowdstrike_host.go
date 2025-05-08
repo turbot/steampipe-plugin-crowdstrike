@@ -175,15 +175,12 @@ func getCrowdStrikeHost(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	return getDeviceByIdBatch(ctx, client, []string{deviceId})
 }
 
-func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) (res []*models.DomainDeviceSwagger, err error) {
+func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) (res []*models.DeviceapiDeviceSwagger, err error) {
 	if len(ids) == 0 {
-		return []*models.DomainDeviceSwagger{}, nil
+		return []*models.DeviceapiDeviceSwagger{}, nil
 	}
-	response, err := client.Hosts.GetDeviceDetails(&hosts.GetDeviceDetailsParams{
-		Ids:     ids,
-		Context: ctx,
-	})
-
+	params := hosts.NewGetDeviceDetailsV2Params().WithIds(ids).WithContext(ctx)
+	response, err := client.Hosts.GetDeviceDetailsV2(params)
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.GetCrowdStrikeHost", "get_device_error", err)
 		return nil, err
@@ -191,6 +188,5 @@ func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecif
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
 		return nil, err
 	}
-
 	return response.Payload.Resources, nil
 }

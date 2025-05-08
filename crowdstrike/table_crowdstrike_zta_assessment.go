@@ -64,7 +64,7 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 	}()
 
 	if h.Item != nil {
-		result := h.Item.(*models.DomainDeviceSwagger)
+		result := h.Item.(*models.DeviceapiDeviceSwagger)
 		deviceId = *result.DeviceID
 	} else {
 		deviceId = d.EqualsQuals["device_id"].GetStringValue()
@@ -83,10 +83,6 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 	}
 
 	if err != nil {
-		if _, ok := err.(*zero_trust_assessment.GetAssessmentV1NotFound); ok {
-			// no records
-			return nil, nil
-		}
 		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
