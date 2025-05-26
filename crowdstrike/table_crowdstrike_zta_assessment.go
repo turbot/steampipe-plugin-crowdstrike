@@ -27,17 +27,15 @@ func tableCrowdStrikeZtaAssessment(_ context.Context) *plugin.Table {
 			ParentHydrate: listCrowdStrikeHosts,
 		},
 		Columns: []*plugin.Column{
-			{Name: "device_id", Description: "Host device ID.", Type: proto.ColumnType_STRING},
-			{Name: "cid", Description: "The Customer ID.", Type: proto.ColumnType_STRING},
-			{Name: "aid", Description: "The agent ID.", Type: proto.ColumnType_STRING},
-			{Name: "assessment", Description: "The Assessment object.", Type: proto.ColumnType_JSON},
-			{Name: "assessment_items", Description: "Assessment items.", Type: proto.ColumnType_JSON},
-			{Name: "event_platform", Description: "The platform on which the event occurred.", Type: proto.ColumnType_STRING},
+			{Name: "aid", Description: "The agent ID.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Aid")},
+			{Name: "assessment", Description: "The Assessment object.", Type: proto.ColumnType_JSON, Transform: transform.FromField("Assessment")},
+			{Name: "assessment_items", Description: "Assessment items.", Type: proto.ColumnType_JSON, Transform: transform.FromField("AssessmentItems")},
+			{Name: "cid", Description: "The Customer ID.", Type: proto.ColumnType_STRING, Transform: transform.FromField("Cid")},
+			{Name: "event_platform", Description: "The platform on which the event occurred.", Type: proto.ColumnType_STRING, Transform: transform.FromField("EventPlatform")},
 			{Name: "modified_time", Description: "Timestamp of last modified.", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("ModifiedTime").Transform(strfmtDatetimeTransformer)},
-			{Name: "product_type_desc", Description: "Product type.", Type: proto.ColumnType_STRING},
-			{Name: "sensor_file_status", Description: "Sensor file status.", Type: proto.ColumnType_STRING},
-			{Name: "system_serial_number", Description: "System serial number.", Type: proto.ColumnType_STRING},
-
+			{Name: "product_type_desc", Description: "Product type.", Type: proto.ColumnType_STRING, Transform: transform.FromField("ProductTypeDesc")},
+			{Name: "sensor_file_status", Description: "Sensor file status.", Type: proto.ColumnType_STRING, Transform: transform.FromField("SensorFileStatus")},
+			{Name: "system_serial_number", Description: "System serial number.", Type: proto.ColumnType_STRING, Transform: transform.FromField("SystemSerialNumber")},
 			// Steampipe standard columns
 			{Name: "title", Description: "Title of the resource.", Type: proto.ColumnType_STRING, Transform: transform.FromField("SystemSerialNumber")},
 		},
@@ -64,7 +62,7 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 	}()
 
 	if h.Item != nil {
-		result := h.Item.(*models.DomainDeviceSwagger)
+		result := h.Item.(*models.DeviceapiDeviceSwagger)
 		deviceId = *result.DeviceID
 	} else {
 		deviceId = d.EqualsQuals["device_id"].GetStringValue()
@@ -83,10 +81,6 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 	}
 
 	if err != nil {
-		if _, ok := err.(*zero_trust_assessment.GetAssessmentV1NotFound); ok {
-			// no records
-			return nil, nil
-		}
 		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
