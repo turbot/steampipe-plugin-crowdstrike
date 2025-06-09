@@ -5,6 +5,7 @@ import (
 
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client"
+	"github.com/crowdstrike/gofalcon/falcon/client/alerts"
 	"github.com/crowdstrike/gofalcon/falcon/client/detects"
 	"github.com/crowdstrike/gofalcon/falcon/models"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -133,24 +134,34 @@ func listCrowdStrikeDetections(ctx context.Context, d *plugin.QueryData, h *plug
 			return nil, err
 		}
 
+		// Batch size
+		batchSize := 999
 		detectIdBatch := response.Payload.Resources
-		plugin.Logger(ctx).Trace("detect batch length", len(detectIdBatch))
-		detects, err := getDetectsByIds(ctx, client, detectIdBatch)
-		if err != nil {
-			return nil, err
-		}
 
-		for _, detect := range detects {
-			d.StreamListItem(ctx, detect)
-			if d.RowsRemaining(ctx) < 1 {
-				return nil, nil
+		for i := 0; i < len(detectIdBatch); i += batchSize {
+			// Get the end index for the batch
+			end := i + batchSize
+			if end > len(detectIdBatch) {
+				end = len(detectIdBatch) // Ensure we don't go out of bounds
 			}
-		}
 
-		if err != nil {
-			return nil, err
-		}
+			// Extract the batch
+			batchIds := detectIdBatch[i:end]
 
+			plugin.Logger(ctx).Trace("detect batch length", len(batchIds))
+			batchDetects, err := getDetectsByIds(ctx, client, batchIds)
+			if err != nil {
+				return nil, err
+			}
+
+			for _, detect := range batchDetects {
+				d.StreamListItem(ctx, detect)
+				if d.RowsRemaining(ctx) < 1 {
+					return nil, nil
+				}
+			}
+
+		}
 		offset = offset + int64(len(detectIdBatch))
 		if offset >= *response.Payload.Meta.Pagination.Total {
 			break
@@ -179,16 +190,16 @@ func getCrowdStrikeDetection(ctx context.Context, d *plugin.QueryData, h *plugin
 	return detect[0], nil
 }
 
-func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DomainAPIDetectionDocument, error) {
+func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DetectsAlert, error) {
 	if len(ids) == 0 {
-		return []*models.DomainAPIDetectionDocument{}, nil
+		return []*models.DetectsAlert{}, nil
 	}
 
-	response, err := client.Detects.GetDetectSummaries(
-		detects.NewGetDetectSummariesParamsWithContext(ctx).WithBody(&models.MsaIdsRequest{
+	response, err := client.Alerts.PostEntitiesAlertsV1(&alerts.PostEntitiesAlertsV1Params{
+		Body: &models.DetectsapiPostEntitiesAlertsV1Request{
 			Ids: ids,
-		}),
-	)
+		},
+	})
 
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)

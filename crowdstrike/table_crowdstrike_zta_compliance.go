@@ -34,10 +34,10 @@ func listCrowdStrikeZtaCompliance(ctx context.Context, d *plugin.QueryData, h *p
 		return nil, err
 	}
 
-	response, err := client.ZeroTrustAssessment.GetComplianceV1(
-		zero_trust_assessment.NewGetComplianceV1Params().
-			WithContext(ctx).WithDefaults(),
-	)
+	input := &zero_trust_assessment.GetAuditV1Params{
+		Context: ctx,
+	}
+	response, err := client.ZeroTrustAssessment.GetAuditV1(input)
 	if err != nil {
 		plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeZtaCompliance", "query_error", err)
 		return nil, err

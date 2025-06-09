@@ -135,19 +135,35 @@ func listCrowdStrikeHosts(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 		}
 
 		hostDeviceIds := response.Payload.Resources
-		devices, err := getDeviceByIdBatch(ctx, client, hostDeviceIds)
-		if err != nil {
-			return nil, err
+
+		// Batch size
+		batchSize := 99
+		var devices []*models.DeviceapiDeviceSwagger
+
+		// Iterate over the array in batches. The API GetDeviceDetailsV2 can process up to 100 Device IDs in a single operation.
+		// https://www.falconpy.io/Service-Collections/Hosts.html#getdevicedetailsv2
+		for i := 0; i < len(hostDeviceIds); i += batchSize {
+			// Get the end index for the batch
+			end := i + batchSize
+			if end > len(hostDeviceIds) {
+				end = len(hostDeviceIds) // Ensure we don't go out of bounds
+			}
+
+			// Extract the batch
+			batchIds := hostDeviceIds[i:end]
+
+			batchDevices, err := getDeviceByIdBatch(ctx, client, batchIds)
+			if err != nil {
+				return nil, err
+			}
+			devices = append(devices, batchDevices...)
 		}
+
 		for _, device := range devices {
 			d.StreamListItem(ctx, device)
 			if d.RowsRemaining(ctx) < 1 {
 				return nil, nil
 			}
-		}
-
-		if err != nil {
-			return nil, err
 		}
 
 		if *response.Payload.Meta.Pagination.Offset == "" {
@@ -175,11 +191,12 @@ func getCrowdStrikeHost(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	return getDeviceByIdBatch(ctx, client, []string{deviceId})
 }
 
-func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) (res []*models.DomainDeviceSwagger, err error) {
+func getDeviceByIdBatch(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) (res []*models.DeviceapiDeviceSwagger, err error) {
 	if len(ids) == 0 {
-		return []*models.DomainDeviceSwagger{}, nil
+		return []*models.DeviceapiDeviceSwagger{}, nil
 	}
-	response, err := client.Hosts.GetDeviceDetails(&hosts.GetDeviceDetailsParams{
+
+	response, err := client.Hosts.GetDeviceDetailsV2(&hosts.GetDeviceDetailsV2Params{
 		Ids:     ids,
 		Context: ctx,
 	})
