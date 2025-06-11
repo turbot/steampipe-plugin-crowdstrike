@@ -1,0 +1,1332 @@
+ select * from crowdstrike_spotlight_vulnerability limit 1
+{
+ "columns": [
+  {
+   "name": "cid",
+   "data_type": "text"
+  },
+  {
+   "name": "aid",
+   "data_type": "text"
+  },
+  {
+   "name": "app",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "apps",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "closed_timestamp",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "created_timestamp",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "cve",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "host_info",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "id",
+   "data_type": "text"
+  },
+  {
+   "name": "remediation",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "status",
+   "data_type": "text"
+  },
+  {
+   "name": "updated_timestamp",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "title",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_connection_name",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_ctx",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "_ctx",
+   "data_type": "jsonb"
+  }
+ ],
+ "rows": [
+  {
+   "_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "aid": "0eeab26a1dfd4b80a02e8d72ecd38d4f",
+   "app": {
+    "product_name_version": "Wireshark 3.4"
+   },
+   "apps": [
+    {
+     "evaluation_logic": {
+      "id": "7482d7445b76303586b5fa77462c4c4d",
+      "logic": null
+     },
+     "product_name_version": "Wireshark 3.4",
+     "remediation": {
+      "ids": [
+       "3df80ed5372934c38f1b63d44eb4ed9c"
+      ]
+     },
+     "sub_status": "open"
+    }
+   ],
+   "cid": "dac3413c4cc44ef9bd66f2f6091d283d",
+   "closed_timestamp": null,
+   "created_timestamp": "2022-07-08T04:38:12+05:30",
+   "cve": {
+    "base_score": 7.5,
+    "description": "NULL pointer exception in the IPPUSB dissector in Wireshark 3.4.0 to 3.4.9 allows denial of service via packet injection or crafted capture file\n",
+    "exploit_status": 30,
+    "exploitability_score": 3.9,
+    "exprt_rating": "LOW",
+    "id": "CVE-2021-39920",
+    "impact_score": 3.6,
+    "published_date": "2021-11-18T19:15:00Z",
+    "references": [
+     "https://gitlab.com/gitlab-org/cves/-/blob/master/2021/CVE-2021-39920.json",
+     "https://gitlab.com/wireshark/wireshark/-/issues/17705",
+     "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/A6AJFIYIHS3TYDD2EBYBJ5KKE52X34BJ/",
+     "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/YEWTIRMC2MFQBZ2O5M4CJHJM4JPBHLXH/",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/A6AJFIYIHS3TYDD2EBYBJ5KKE52X34BJ/",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/YEWTIRMC2MFQBZ2O5M4CJHJM4JPBHLXH/",
+     "https://security.gentoo.org/glsa/202210-04",
+     "https://www.debian.org/security/2021/dsa-5019"
+    ],
+    "severity": "HIGH",
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+    "vendor_advisory": [
+     "https://www.wireshark.org/security/wnpa-sec-2021-15.html"
+    ]
+   },
+   "host_info": {
+    "groups": [
+     {
+      "id": "599dd69267ba42aca4b25d225393be56",
+      "name": "MacOS-default"
+     }
+    ],
+    "hostname": "Jasons-MacBook-Pro.local",
+    "local_ip": "192.168.24.151",
+    "machine_domain": "",
+    "os_version": "Sonoma (14)",
+    "ou": "",
+    "platform": "Mac",
+    "site_name": "",
+    "system_manufacturer": "Apple Inc.",
+    "tags": [
+     "FalconGroupingTags/device-owner-Jason-Campbell"
+    ]
+   },
+   "id": "0eeab26a1dfd4b80a02e8d72ecd38d4f_fe83738c057b3efd874d43a4f23a63de",
+   "remediation": {
+    "entities": [
+     {
+      "action": "Update Wireshark 3.4 to version 3.4.16 or newer",
+      "id": "3df80ed5372934c38f1b63d44eb4ed9c",
+      "link": "",
+      "reference": "3.4.16",
+      "title": "Update Wireshark Wireshark 3.4"
+     },
+     {
+      "action": "Update Wireshark 3.4 to version 3.4.10 or newer",
+      "id": "cf1390dee65c35deb757dd680dc0a9ca",
+      "link": "",
+      "reference": "3.4.10",
+      "title": "Update Wireshark Wireshark 3.4"
+     }
+    ],
+    "ids": [
+     "3df80ed5372934c38f1b63d44eb4ed9c",
+     "cf1390dee65c35deb757dd680dc0a9ca"
+    ]
+   },
+   "sp_connection_name": "crowdstrike",
+   "sp_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "status": "open",
+   "title": null,
+   "updated_timestamp": "2025-03-20T22:52:26+05:30"
+  }
+ ]
+}
+
+> select * from crowdstrike_user limit 1
+{
+ "columns": [
+  {
+   "name": "customer",
+   "data_type": "text"
+  },
+  {
+   "name": "first_name",
+   "data_type": "text"
+  },
+  {
+   "name": "last_name",
+   "data_type": "text"
+  },
+  {
+   "name": "uid",
+   "data_type": "text"
+  },
+  {
+   "name": "uuid",
+   "data_type": "text"
+  },
+  {
+   "name": "roles",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "title",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_connection_name",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_ctx",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "_ctx",
+   "data_type": "jsonb"
+  }
+ ],
+ "rows": [
+  {
+   "_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "customer": "dac3413c4cc44ef9bd66f2f6091d283d",
+   "first_name": "Nicholas",
+   "last_name": "Nichson",
+   "roles": [
+    "1beee0c090254b5e9184fccc808208e3",
+    "falconhost_admin"
+   ],
+   "sp_connection_name": "crowdstrike",
+   "sp_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "title": "nicholas.nichson@mantelgroup.com.au",
+   "uid": "nicholas.nichson@mantelgroup.com.au",
+   "uuid": "4053bf76-6292-4ccf-b19a-7eb01b181889"
+  }
+ ]
+}
+
+> select * from crowdstrike_zta_assessment limit 1
+{
+ "columns": [
+  {
+   "name": "device_id",
+   "data_type": "text"
+  },
+  {
+   "name": "cid",
+   "data_type": "text"
+  },
+  {
+   "name": "aid",
+   "data_type": "text"
+  },
+  {
+   "name": "assessment",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "assessment_items",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "event_platform",
+   "data_type": "text"
+  },
+  {
+   "name": "modified_time",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "product_type_desc",
+   "data_type": "text"
+  },
+  {
+   "name": "sensor_file_status",
+   "data_type": "text"
+  },
+  {
+   "name": "system_serial_number",
+   "data_type": "text"
+  },
+  {
+   "name": "title",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_connection_name",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_ctx",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "_ctx",
+   "data_type": "jsonb"
+  }
+ ],
+ "rows": [
+  {
+   "_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "aid": "f3d101de3eda40b3ab51642239a19e27",
+   "assessment": {
+    "os": 96,
+    "overall": 99,
+    "sensor_config": 100,
+    "version": "4.0.3"
+   },
+   "assessment_items": {
+    "os_signals": [
+     {
+      "criteria": "macOS version is ≥11.0",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "mac_os_version",
+      "signal_name": "macOS Version"
+     },
+     {
+      "criteria": "FileVault: enabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "file_vault_enabled_mac",
+      "signal_name": "FileVault"
+     },
+     {
+      "criteria": "System Integrity Protection (SIP): enabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "sip_enabled_mac",
+      "signal_name": "System Integrity Protection (SIP)"
+     },
+     {
+      "criteria": "Remote Login: disabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "remote_login_mac",
+      "signal_name": "Remote Login"
+     },
+     {
+      "criteria": "Gatekeeper: enabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "gatekeeper_mac",
+      "signal_name": "Gatekeeper"
+     },
+     {
+      "criteria": "Application Firewall: enabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "application_firewall_mac",
+      "signal_name": "Application Firewall"
+     },
+     {
+      "criteria": "Stealth Mode: enabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "stealth_mode_mac",
+      "signal_name": "Stealth Mode"
+     },
+     {
+      "criteria": "Internet Sharing: disabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "internet_sharing_mac",
+      "signal_name": "Internet Sharing"
+     },
+     {
+      "criteria": "System Full Disk Access: disabled",
+      "group_name": "macOS",
+      "meets_criteria": "no",
+      "signal_id": "system_full_disk_access_mac",
+      "signal_name": "System Full Disk Access"
+     },
+     {
+      "criteria": "CrowdStrike Full Disk Access: enabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "crowdstrike_full_disk_access",
+      "signal_name": "CrowdStrike Full Disk Access"
+     },
+     {
+      "criteria": "Analytics & Improvements: disabled",
+      "group_name": "macOS",
+      "meets_criteria": "yes",
+      "signal_id": "analytics_and_improvements_mac",
+      "signal_name": "Analytics & Improvements"
+     }
+    ],
+    "sensor_signals": [
+     {
+      "criteria": "Cloud ML - Cloud Anti-malware Detection: set to Aggressive or higher",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "ml_cloud_antimalware_detection_mac",
+      "signal_name": "Cloud ML - Cloud Anti-malware - Detection for macOS"
+     },
+     {
+      "criteria": "Cloud ML - Cloud Anti-malware Prevention: set to Moderate or higher",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "ml_cloud_antimalware_prevention_mac",
+      "signal_name": "Cloud ML - Cloud Anti-malware - Prevention for macOS"
+     },
+     {
+      "criteria": "Cloud ML - Adware & PUP Detection: set to Aggressive or higher",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "ml_adware_detection_mac",
+      "signal_name": "Cloud ML - Adware & PUP - Detection for macOS"
+     },
+     {
+      "criteria": "Cloud ML - Adware & PUP Prevention: set to Moderate or higher",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "ml_adware_prevention_mac",
+      "signal_name": "Cloud ML - Adware & PUP - Prevention for macOS"
+     },
+     {
+      "criteria": "Sensor ML - Anti-malware Detection: set to Aggressive or higher",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "ml_sensor_antimalware_detection_mac",
+      "signal_name": "Sensor ML Anti-malware | Detection for macOS"
+     },
+     {
+      "criteria": "Sensor ML - Anti-malware Prevention: set to Moderate or higher",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "ml_sensor_antimalware_prevention_mac",
+      "signal_name": "Sensor ML Anti-malware | Prevention for macOS"
+     },
+     {
+      "criteria": "Sensor ML - Adware & PUP Detection: set to Aggressive or higher",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "ml_sensor_adware_and_pup_detection_mac",
+      "signal_name": "Sensor ML Adware & PUP | Detection for macOS"
+     },
+     {
+      "criteria": "Sensor ML - Adware & PUP Prevention: set to Moderate or higher",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "ml_sensor_adware_and_pup_prevention_mac",
+      "signal_name": "Sensor ML Adware & PUP | Prevention for macOS"
+     },
+     {
+      "criteria": "Quarantine: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "quarantine_mac",
+      "signal_name": "Quarantine"
+     },
+     {
+      "criteria": "Execution Blocking - Custom Blocking: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "execution_blocking_custom_blocking_enabled_mac",
+      "signal_name": "Execution Blocking - Custom Blocking for macOS"
+     },
+     {
+      "criteria": "Execution Blocking - Intel Threats: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "execution_blocking_intel_threats_enabled_mac",
+      "signal_name": "Execution Blocking - Intelligence-Sourced Threats for macOS"
+     },
+     {
+      "criteria": "Execution Blocking - Suspicious Processes: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "execution_blocking_suspicious_processes_enabled_mac",
+      "signal_name": "Execution Blocking - Suspicious Processes for macOS"
+     },
+     {
+      "criteria": "Unauthorized Remote Access IOAs - XPCOM Shell: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "unauthorized_remote_access_xpcom_mac",
+      "signal_name": "Unauthorized Remote Access IOAs - XPCOM Shell"
+     },
+     {
+      "criteria": "Unauthorized Remote Access IOAs - Chopper Webshell: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "unauthorized_remote_access_chopper_mac",
+      "signal_name": "Unauthorized Remote Access IOAs - Chopper Webshell"
+     },
+     {
+      "criteria": "Unauthorized Remote Access IOAs - Empyre Backdoor: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "unauthorized_remote_access_empyre_mac",
+      "signal_name": "Unauthorized Remote Access IOAs - Empyre Backdoor"
+     },
+     {
+      "criteria": "Credential Dumping IOAs - KcPassword Decoded: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "crendential_dumping_kcpassword_mac",
+      "signal_name": "Credential Dumping IOAs - KcPassword Decoded"
+     },
+     {
+      "criteria": "Credential Dumping IOAs - Hash Collector: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "crendential_dumping_hash_mac",
+      "signal_name": "Credential Dumping IOAs - Hash Collector"
+     },
+     {
+      "criteria": "Script-based Execution Monitoring for macOS: enabled",
+      "group_name": "Prevention",
+      "meets_criteria": "yes",
+      "signal_id": "script_based_execution_monitoring_mac",
+      "signal_name": "Script-based Execution Monitoring for macOS"
+     },
+     {
+      "criteria": "Real Time Response: enabled",
+      "group_name": "Sensor",
+      "meets_criteria": "yes",
+      "signal_id": "real_time_response_enabled_mac",
+      "signal_name": "CrowdStrike - Real Time Response for macOS"
+     }
+    ]
+   },
+   "cid": "dac3413c4cc44ef9bd66f2f6091d283d",
+   "device_id": "f3d101de3eda40b3ab51642239a19e27",
+   "event_platform": "Mac",
+   "modified_time": "2025-04-15T13:46:49+05:30",
+   "product_type_desc": "Workstation",
+   "sensor_file_status": "not deployed",
+   "sp_connection_name": "crowdstrike",
+   "sp_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "system_serial_number": "HV6MFJWKJW",
+   "title": "HV6MFJWKJW"
+  }
+ ]
+}
+
+> select * from crowdstrike_zta_compliance limit 1
+{
+ "columns": [
+  {
+   "name": "cid",
+   "data_type": "text"
+  },
+  {
+   "name": "average_overall_score",
+   "data_type": "float8"
+  },
+  {
+   "name": "num_aids",
+   "data_type": "int8"
+  },
+  {
+   "name": "platforms",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "title",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_connection_name",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_ctx",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "_ctx",
+   "data_type": "jsonb"
+  }
+ ],
+ "rows": [
+  {
+   "_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "average_overall_score": 97.40796019900498,
+   "cid": "dac3413c4cc44ef9bd66f2f6091d283d",
+   "num_aids": 804,
+   "platforms": [
+    {
+     "average_overall_score": 94.77333333333333,
+     "compliance": null,
+     "name": "Windows Server 2025",
+     "num_aids": 75
+    },
+    {
+     "average_overall_score": 80,
+     "compliance": null,
+     "name": "Windows Server 2016",
+     "num_aids": 1
+    },
+    {
+     "average_overall_score": 94.6082474226804,
+     "compliance": null,
+     "name": "Windows 10",
+     "num_aids": 97
+    },
+    {
+     "average_overall_score": 98.49920255183413,
+     "compliance": null,
+     "name": "macOS",
+     "num_aids": 627
+    },
+    {
+     "average_overall_score": 48,
+     "compliance": null,
+     "name": "Linux",
+     "num_aids": 4
+    }
+   ],
+   "sp_connection_name": "crowdstrike",
+   "sp_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "title": "dac3413c4cc44ef9bd66f2f6091d283d"
+  }
+ ]
+}
+select * from crowdstrike_host limit 1
+{
+ "columns": [
+  {
+   "name": "agent_load_flags",
+   "data_type": "int8"
+  },
+  {
+   "name": "agent_local_time",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "agent_version",
+   "data_type": "text"
+  },
+  {
+   "name": "bios_manufacturer",
+   "data_type": "text"
+  },
+  {
+   "name": "bios_version",
+   "data_type": "text"
+  },
+  {
+   "name": "build_number",
+   "data_type": "text"
+  },
+  {
+   "name": "cid",
+   "data_type": "text"
+  },
+  {
+   "name": "config_id_base",
+   "data_type": "text"
+  },
+  {
+   "name": "config_id_build",
+   "data_type": "text"
+  },
+  {
+   "name": "config_id_platform",
+   "data_type": "text"
+  },
+  {
+   "name": "cpu_signature",
+   "data_type": "text"
+  },
+  {
+   "name": "detection_suppression_status",
+   "data_type": "text"
+  },
+  {
+   "name": "device_id",
+   "data_type": "text"
+  },
+  {
+   "name": "device_policies",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "email",
+   "data_type": "text"
+  },
+  {
+   "name": "external_ip",
+   "data_type": "inet"
+  },
+  {
+   "name": "first_login_timestamp",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "first_seen",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "host_hidden_status",
+   "data_type": "text"
+  },
+  {
+   "name": "hostname",
+   "data_type": "text"
+  },
+  {
+   "name": "instance_id",
+   "data_type": "text"
+  },
+  {
+   "name": "last_login_timestamp",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "last_seen",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "local_ip",
+   "data_type": "inet"
+  },
+  {
+   "name": "mac_address",
+   "data_type": "text"
+  },
+  {
+   "name": "machine_domain",
+   "data_type": "text"
+  },
+  {
+   "name": "major_version",
+   "data_type": "text"
+  },
+  {
+   "name": "minor_version",
+   "data_type": "text"
+  },
+  {
+   "name": "managed_apps",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "meta",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "notes",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "os_version",
+   "data_type": "text"
+  },
+  {
+   "name": "ou",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "platform_id",
+   "data_type": "text"
+  },
+  {
+   "name": "platform_name",
+   "data_type": "text"
+  },
+  {
+   "name": "pod_id",
+   "data_type": "text"
+  },
+  {
+   "name": "pod_name",
+   "data_type": "text"
+  },
+  {
+   "name": "pod_namespace",
+   "data_type": "text"
+  },
+  {
+   "name": "pod_service_account_name",
+   "data_type": "text"
+  },
+  {
+   "name": "pod_hostname",
+   "data_type": "text"
+  },
+  {
+   "name": "pod_annotations",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "pod_labels",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "pod_host_ipv4",
+   "data_type": "inet"
+  },
+  {
+   "name": "pod_host_ipv6",
+   "data_type": "inet"
+  },
+  {
+   "name": "pod_ipv4",
+   "data_type": "inet"
+  },
+  {
+   "name": "pod_ipv6",
+   "data_type": "inet"
+  },
+  {
+   "name": "pointer_size",
+   "data_type": "int8"
+  },
+  {
+   "name": "policies",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "product_type",
+   "data_type": "text"
+  },
+  {
+   "name": "product_type_desc",
+   "data_type": "text"
+  },
+  {
+   "name": "provision_status",
+   "data_type": "text"
+  },
+  {
+   "name": "reduced_functionality_mode",
+   "data_type": "text"
+  },
+  {
+   "name": "release_group",
+   "data_type": "text"
+  },
+  {
+   "name": "serial_number",
+   "data_type": "text"
+  },
+  {
+   "name": "service_pack_major",
+   "data_type": "text"
+  },
+  {
+   "name": "service_pack_minor",
+   "data_type": "text"
+  },
+  {
+   "name": "service_provider",
+   "data_type": "text"
+  },
+  {
+   "name": "service_provider_account_id",
+   "data_type": "text"
+  },
+  {
+   "name": "site_name",
+   "data_type": "text"
+  },
+  {
+   "name": "slow_changing_modified_timestamp",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "status",
+   "data_type": "text"
+  },
+  {
+   "name": "system_manufacturer",
+   "data_type": "text"
+  },
+  {
+   "name": "system_product_name",
+   "data_type": "text"
+  },
+  {
+   "name": "tags",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "zone_group",
+   "data_type": "text"
+  },
+  {
+   "name": "title",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_connection_name",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_ctx",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "_ctx",
+   "data_type": "jsonb"
+  }
+ ],
+ "rows": [
+  {
+   "_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "agent_load_flags": 0,
+   "agent_local_time": "2025-04-15T23:46:42+05:30",
+   "agent_version": "7.24.19504.0",
+   "bios_manufacturer": null,
+   "bios_version": null,
+   "build_number": null,
+   "cid": "dac3413c4cc44ef9bd66f2f6091d283d",
+   "config_id_base": "65994763",
+   "config_id_build": "19504",
+   "config_id_platform": "4",
+   "cpu_signature": "4294967295",
+   "detection_suppression_status": null,
+   "device_id": "f3d101de3eda40b3ab51642239a19e27",
+   "device_policies": {
+    "device_control": {
+     "applied": true,
+     "applied_date": "2024-05-10T00:37:54.253Z",
+     "assigned_date": "2024-05-10T00:07:31.354Z",
+     "policy_id": "b3b4705321fe453ab8088b525dbc3ebf",
+     "policy_type": "device-control",
+     "rule_groups": null,
+     "settings_hash": "3f4af972"
+    },
+    "firewall": {
+     "applied": true,
+     "applied_date": "2024-04-02T03:35:34.753Z",
+     "assigned_date": "2024-04-02T02:08:25.235Z",
+     "policy_id": "a1feddc5f99f433e890eb07bb83ea353",
+     "policy_type": "firewall",
+     "rule_groups": null,
+     "rule_set_id": "a1feddc5f99f433e890eb07bb83ea353",
+     "settings_hash": "8b1fbed9"
+    },
+    "global_config": {
+     "applied": true,
+     "applied_date": "2025-04-15T08:17:01.538Z",
+     "assigned_date": "2025-04-15T08:16:44.256Z",
+     "policy_id": "99f490f44bde4dc2a1c4cf1e1c24c8cb",
+     "policy_type": "globalconfig",
+     "rule_groups": null,
+     "settings_hash": "731ca4c"
+    },
+    "prevention": {
+     "applied": true,
+     "applied_date": "2024-07-05T02:14:14.262Z",
+     "assigned_date": "2024-07-05T02:08:12.111Z",
+     "policy_id": "12315a28eada4e57ad00a7b58c88e523",
+     "policy_type": "prevention",
+     "rule_groups": [],
+     "settings_hash": "8f774417"
+    },
+    "remote_response": {
+     "applied": true,
+     "applied_date": "2024-02-06T10:05:48.848Z",
+     "assigned_date": "2024-02-06T10:05:02.060Z",
+     "policy_id": "3b11693170cc4428a9b8958aefe63d43",
+     "policy_type": "remote-response",
+     "rule_groups": null,
+     "settings_hash": "188b205c"
+    },
+    "sensor_update": {
+     "applied": true,
+     "applied_date": "2025-04-08T07:22:09.933Z",
+     "assigned_date": "2025-04-08T07:15:22.861Z",
+     "policy_id": "af994678945b471f806e2be72f8699c1",
+     "policy_type": "sensor-update",
+     "rule_groups": null,
+     "settings_hash": "tagged|18;101",
+     "uninstall_protection": "ENABLED"
+    }
+   },
+   "email": null,
+   "external_ip": "220.101.115.218",
+   "first_login_timestamp": null,
+   "first_seen": "2023-11-30T08:24:14+05:30",
+   "host_hidden_status": null,
+   "hostname": "MitchBook-Pro.local",
+   "instance_id": null,
+   "last_login_timestamp": "2024-05-07T09:43:05+05:30",
+   "last_seen": "2025-04-15T13:46:48+05:30",
+   "local_ip": "10.10.10.85",
+   "mac_address": "6a-87-e3-1c-bb-ad",
+   "machine_domain": null,
+   "major_version": "24",
+   "managed_apps": null,
+   "meta": {
+    "version": "10111"
+   },
+   "minor_version": "4",
+   "notes": null,
+   "os_version": "Sequoia (15)",
+   "ou": null,
+   "platform_id": "1",
+   "platform_name": "Mac",
+   "pod_annotations": null,
+   "pod_host_ipv4": null,
+   "pod_host_ipv6": null,
+   "pod_hostname": null,
+   "pod_id": null,
+   "pod_ipv4": null,
+   "pod_ipv6": null,
+   "pod_labels": null,
+   "pod_name": null,
+   "pod_namespace": null,
+   "pod_service_account_name": null,
+   "pointer_size": null,
+   "policies": [
+    {
+     "applied": true,
+     "applied_date": "2024-07-05T02:14:14.262Z",
+     "assigned_date": "2024-07-05T02:08:12.111Z",
+     "policy_id": "12315a28eada4e57ad00a7b58c88e523",
+     "policy_type": "prevention",
+     "rule_groups": [],
+     "settings_hash": "8f774417"
+    }
+   ],
+   "product_type": null,
+   "product_type_desc": "Workstation",
+   "provision_status": "Provisioned",
+   "reduced_functionality_mode": "no",
+   "release_group": null,
+   "serial_number": "HV6MFJWKJW",
+   "service_pack_major": null,
+   "service_pack_minor": null,
+   "service_provider": null,
+   "service_provider_account_id": null,
+   "site_name": null,
+   "slow_changing_modified_timestamp": null,
+   "sp_connection_name": "crowdstrike",
+   "sp_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "status": "normal",
+   "system_manufacturer": "Apple Inc.",
+   "system_product_name": "Mac15,6",
+   "tags": [],
+   "title": "MitchBook-Pro.local",
+   "zone_group": null
+  }
+ ]
+}
+select * from crowdstrike_detection limit 1
+{
+ "columns": [
+  {
+   "name": "adversary_ids",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "assigned_to_name",
+   "data_type": "text"
+  },
+  {
+   "name": "assigned_to_uid",
+   "data_type": "text"
+  },
+  {
+   "name": "behaviors",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "behaviors_processed",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "cid",
+   "data_type": "text"
+  },
+  {
+   "name": "created_timestamp",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "detection_id",
+   "data_type": "text"
+  },
+  {
+   "name": "device",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "email_sent",
+   "data_type": "bool"
+  },
+  {
+   "name": "first_behavior",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "host_info",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "last_behavior",
+   "data_type": "timestamptz"
+  },
+  {
+   "name": "max_confidence",
+   "data_type": "int8"
+  },
+  {
+   "name": "max_severity",
+   "data_type": "int8"
+  },
+  {
+   "name": "max_severity_display_name",
+   "data_type": "text"
+  },
+  {
+   "name": "overwatch_notes",
+   "data_type": "text"
+  },
+  {
+   "name": "quarantined_files",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "seconds_to_resolved",
+   "data_type": "int8"
+  },
+  {
+   "name": "seconds_to_triaged",
+   "data_type": "int8"
+  },
+  {
+   "name": "show_in_ui",
+   "data_type": "bool"
+  },
+  {
+   "name": "status",
+   "data_type": "text"
+  },
+  {
+   "name": "title",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_connection_name",
+   "data_type": "text"
+  },
+  {
+   "name": "sp_ctx",
+   "data_type": "jsonb"
+  },
+  {
+   "name": "_ctx",
+   "data_type": "jsonb"
+  }
+ ],
+ "rows": [
+  {
+   "_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "adversary_ids": null,
+   "assigned_to_name": null,
+   "assigned_to_uid": "",
+   "behaviors": [
+    {
+     "alleged_filetype": "",
+     "behavior_id": "5700",
+     "cmdline": "./bin/server",
+     "confidence": 30,
+     "control_graph_id": "ctg:34b9e2fa88304710ab2a9ca506e4a0b4:621594211599906579",
+     "description": "This file meets the machine learning-based on-sensor AV protection's low confidence threshold for malicious files.",
+     "device_id": "34b9e2fa88304710ab2a9ca506e4a0b4",
+     "display_name": "",
+     "filename": "server",
+     "filepath": "/Users/maha/src/mahalel/wltrak/bin/server",
+     "ioc_description": "/Users/maha/src/mahalel/wltrak/bin/server",
+     "ioc_source": "library_load",
+     "ioc_type": "hash_sha256",
+     "ioc_value": "78ac88a7408bc87f715fa1150738098b9d80348fe1ad1300b5b2afe0b4858328",
+     "md5": "59e443b6367ab12a9f140c1401c057bd",
+     "objective": "Falcon Detection Method",
+     "parent_details": {
+      "parent_cmdline": "bash -c (cd /Users/maha/src/mahalel/wltrak; ./bin/server) </dev/null",
+      "parent_md5": "e8d8acd2fbd84d7416744d1ee7e82fc6",
+      "parent_process_graph_id": "pid:34b9e2fa88304710ab2a9ca506e4a0b4:621594210029637770",
+      "parent_sha256": "a3549fe55f4d99bb71167d8ee57332fe7b763510563f552d897e15199186a8b8"
+     },
+     "pattern_disposition": 2304,
+     "pattern_disposition_details": {
+      "bootup_safeguard_enabled": false,
+      "critical_process_disabled": false,
+      "detect": false,
+      "fs_operation_blocked": false,
+      "handle_operation_downgraded": false,
+      "inddet_mask": false,
+      "indicator": false,
+      "kill_parent": false,
+      "kill_process": false,
+      "kill_subprocess": false,
+      "operation_blocked": false,
+      "policy_disabled": true,
+      "process_blocked": true,
+      "quarantine_file": false,
+      "quarantine_machine": false,
+      "registry_operation_blocked": false,
+      "rooting": false,
+      "sensor_only": false
+     },
+     "scenario": "NGAV",
+     "severity": 30,
+     "sha256": "78ac88a7408bc87f715fa1150738098b9d80348fe1ad1300b5b2afe0b4858328",
+     "tactic": "Machine Learning",
+     "tactic_id": "CSTA0004",
+     "technique": "Sensor-based ML",
+     "technique_id": "CST0007",
+     "timestamp": "2025-05-25T22:55:53.000Z",
+     "triggering_process_graph_id": "pid:34b9e2fa88304710ab2a9ca506e4a0b4:621594210054803595",
+     "user_id": "501",
+     "user_name": "maha"
+    }
+   ],
+   "behaviors_processed": [
+    "pid:34b9e2fa88304710ab2a9ca506e4a0b4:621594210054803595:5700"
+   ],
+   "cid": "dac3413c4cc44ef9bd66f2f6091d283d",
+   "created_timestamp": "2025-05-26T04:26:00+05:30",
+   "detection_id": "ldt:34b9e2fa88304710ab2a9ca506e4a0b4:621594211599906579",
+   "device": {
+    "agent_load_flags": "0",
+    "agent_local_time": "2025-05-22T13:36:11.377Z",
+    "agent_version": "7.25.19606.0",
+    "cid": "dac3413c4cc44ef9bd66f2f6091d283d",
+    "config_id_base": "65994763",
+    "config_id_build": "19606",
+    "config_id_platform": "4",
+    "device_id": "34b9e2fa88304710ab2a9ca506e4a0b4",
+    "external_ip": "114.23.105.13",
+    "first_login_timestamp": "2025-03-18T22:52:02Z",
+    "first_login_user": "maha",
+    "first_seen": "2025-03-18T22:52:04Z",
+    "groups": [
+     "599dd69267ba42aca4b25d225393be56"
+    ],
+    "hostname": "Mac.maha.nz",
+    "last_login_timestamp": "2025-03-18T22:52:02Z",
+    "last_login_user": "maha",
+    "last_seen": "2025-05-25T22:41:28Z",
+    "local_ip": "192.168.40.169",
+    "mac_address": "ea-9b-42-8f-90-df",
+    "major_version": "24",
+    "minor_version": "5",
+    "modified_timestamp": "2025-05-25T22:41:46Z",
+    "notes": null,
+    "os_version": "Sequoia (15)",
+    "ou": null,
+    "platform_id": "1",
+    "platform_name": "Mac",
+    "pod_labels": null,
+    "product_type_desc": "Workstation",
+    "status": "normal",
+    "system_manufacturer": "Apple Inc.",
+    "system_product_name": "Mac15,7",
+    "tags": null
+   },
+   "email_sent": false,
+   "first_behavior": "2025-05-26T04:25:53+05:30",
+   "host_info": {
+    "active_directory_dn_display": null,
+    "domain": ""
+   },
+   "last_behavior": "2025-05-26T04:25:53+05:30",
+   "max_confidence": 30,
+   "max_severity": 30,
+   "max_severity_display_name": "Low",
+   "overwatch_notes": null,
+   "quarantined_files": null,
+   "seconds_to_resolved": null,
+   "seconds_to_triaged": null,
+   "show_in_ui": true,
+   "sp_connection_name": "crowdstrike",
+   "sp_ctx": {
+    "connection_name": "crowdstrike",
+    "steampipe": {
+     "sdk_version": "5.11.5"
+    }
+   },
+   "status": "new",
+   "title": ""
+  }
+ ]
+}
