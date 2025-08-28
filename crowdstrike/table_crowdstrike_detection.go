@@ -98,7 +98,7 @@ func listCrowdStrikeDetections(ctx context.Context, d *plugin.QueryData, h *plug
 
 	client, err := getCrowdStrikeClient(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "connection_error", err)
+		plugin.Logger(ctx).Error("crowdstrike_detection.listCrowdStrikeDetections", "connection_error", err)
 		return nil, err
 	}
 
@@ -126,11 +126,11 @@ func listCrowdStrikeDetections(ctx context.Context, d *plugin.QueryData, h *plug
 		})
 
 		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "query_error", err)
+			plugin.Logger(ctx).Error("crowdstrike_detection.listCrowdStrikeDetections", "query_error", err)
 			return nil, err
 		}
 		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "assert_error", err)
+			plugin.Logger(ctx).Error("crowdstrike_detection.listCrowdStrikeDetections", "assert_error", err)
 			return nil, err
 		}
 
