@@ -1,11 +1,11 @@
 module github.com/turbot/steampipe-plugin-crowdstrike
 
-go 1.22.4
+go 1.23.0
 
-toolchain go1.22.6
+toolchain go1.24.1
 
 require (
-	github.com/crowdstrike/gofalcon v0.14.2
+	github.com/crowdstrike/gofalcon v0.16.0
 	github.com/go-openapi/strfmt v0.22.2
 	github.com/turbot/go-kit v0.10.0-rc.0
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.10.4
@@ -114,7 +114,7 @@ require (
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/oauth2 v0.26.0 // indirect
+	golang.org/x/oauth2 v0.30.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
