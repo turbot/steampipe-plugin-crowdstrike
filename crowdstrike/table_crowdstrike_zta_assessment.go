@@ -3,6 +3,7 @@ package crowdstrike
 import (
 	"context"
 	"runtime/debug"
+	"strings"
 	"time"
 
 	"github.com/crowdstrike/gofalcon/falcon"
@@ -90,6 +91,9 @@ func listCrowdStrikeZtaAssesment(ctx context.Context, d *plugin.QueryData, h *pl
 		return nil, err
 	}
 	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+		if strings.Contains(err.Error(), "Assessment not found") {
+			return nil, nil
+		}
 		plugin.Logger(ctx).Error("crowdstrike_zta_assessment.listCrowdStrikeZtaAssesment", "assert_error", err)
 		return nil, err
 	}
