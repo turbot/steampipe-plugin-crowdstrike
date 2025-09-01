@@ -7,7 +7,6 @@ toolchain go1.24.1
 require (
 	github.com/crowdstrike/gofalcon v0.16.0
 	github.com/go-openapi/strfmt v0.22.2
-	github.com/turbot/go-kit v1.1.0
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.10.4
 )
 
@@ -50,7 +49,6 @@ require (
 	github.com/go-openapi/spec v0.20.14 // indirect
 	github.com/go-openapi/swag v0.22.9 // indirect
 	github.com/go-openapi/validate v0.23.1 // indirect
-	github.com/golang/glog v1.2.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
@@ -95,6 +93,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stevenle/topsort v0.2.0 // indirect
 	github.com/tkrajina/go-reflector v0.5.6 // indirect
+	github.com/turbot/go-kit v1.1.0 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/zclconf/go-cty v1.14.4 // indirect
 	go.mongodb.org/mongo-driver v1.14.0 // indirect
