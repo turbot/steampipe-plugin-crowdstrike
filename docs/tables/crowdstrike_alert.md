@@ -13,10 +13,22 @@ The `crowdstrike_alert` table provides insights into threat alerts within the Cr
 
 **Note:** This table uses the new Alerts API which replaces the deprecated Detects API. The Detects API will reach end-of-life on September 30, 2025. For backward compatibility, the `crowdstrike_detection` table is still available but uses the deprecated API.
 
+**Important notes:**
+
+- By default, the table retrieves all available alerts.
+- This table supports optional quals. Queries with optional quals are optimised to use Alert filters. Optional quals are supported for the following columns:
+  - `created_timestamp` with operators: `>`, `>=`, `=`, `<`, `<=`
+  - `status`
+  - `composite_id`
+  - `aggregate_id`
+  - `severity`
+  - `confidence`
+  - `filter` → raw filter string (as per FQL syntax)
+- **Note:** If the `filter` parameter is provided, it takes highest priority over the other qualifiers.
+
 ## Examples
 
 ### Basic info
-
 Explore which alerts were made in your system, when they were identified, and the devices they originated from. This is particularly useful for understanding the security landscape of your network and identifying potential vulnerabilities.
 
 ```sql+postgres
@@ -54,7 +66,6 @@ from
 ```
 
 ### List alerts from the last 3 months
-
 Explore recent security alerts to understand potential vulnerabilities. This query is useful in identifying threats to your system over the past three months, helping to enhance your cybersecurity measures.
 
 ```sql+postgres
@@ -94,7 +105,6 @@ where
 ```
 
 ### List alerts with a `severity` over a threshold
-
 Explore which alerts exceed a certain severity level to prioritize your security response. This is particularly useful in large systems where managing and responding to all alerts may be overwhelming.
 
 ```sql+postgres
@@ -138,7 +148,6 @@ where
 ```
 
 ### List alerts by MITRE ATT&CK tactic
-
 Explore alerts grouped by MITRE ATT&CK tactics to understand the attack patterns and techniques being used against your environment.
 
 ```sql+postgres
@@ -178,7 +187,6 @@ order by
 ```
 
 ### List alerts with specific file hashes
-
 Search for alerts associated with specific file hashes to track malware or suspicious files across your environment.
 
 ```sql+postgres
@@ -222,7 +230,6 @@ where
 ```
 
 ### List alerts by platform
-
 Analyze alerts by platform to understand which operating systems are being targeted and identify platform-specific security concerns.
 
 ```sql+postgres
@@ -260,7 +267,6 @@ order by
 ```
 
 ### List alerts in devices which belong to a network
-
 Explore which alerts are linked to devices within a specific network to manage security threats effectively. This is useful in identifying potential vulnerabilities or breaches within a particular network segment.
 
 ```sql+postgres
@@ -284,7 +290,6 @@ Error: SQLite does not support CIDR operations.
 ```
 
 ### List open alerts
-
 Identify instances where security threats remain unresolved. This query helps in monitoring and managing potential risks by pinpointing open alerts in your system.
 
 ```sql+postgres
@@ -322,7 +327,6 @@ where
 ```
 
 ### List alerts by aggregate_id
-
 Group related alerts together using the aggregate_id, which represents the Agent ID & Process Tree ID, similar to the legacy detection_id.
 
 ```sql+postgres
@@ -363,7 +367,6 @@ order by
 ```
 
 ### List alerts with IOC context
-
 Explore alerts that have Indicator of Compromise (IOC) information to understand the specific threats and indicators being detected.
 
 ```sql+postgres
@@ -403,7 +406,6 @@ where
 ```
 
 ### Get a specific alert
-
 Explore specific security alerts by identifying the corresponding device details and status. This is beneficial in scenarios where you need to understand the security status of a particular device and its operating system.
 
 ```sql+postgres
@@ -446,4 +448,37 @@ from
   crowdstrike_alert
 where
   composite_id = 'd615xxxxxxxx2158:ind:9a8dxxxxxxxxc74c:1336xxxxxxxx1294-32-7878xxxxxxxx1122';
+```
+
+### Use custom filter with FQL syntax
+Use the filter qualifier to apply custom FQL (Falcon Query Language) filters for more complex queries. This example shows how to filter alerts by specific criteria using FQL syntax.
+
+```sql+postgres
+select
+  composite_id,
+  created_timestamp,
+  device ->> 'hostname' as hostname,
+  status,
+  severity,
+  confidence,
+  display_name
+from
+  crowdstrike_alert
+where
+  filter = 'product:''epp''+severity:>70+status:''new''';
+```
+
+```sql+sqlite
+select
+  composite_id,
+  created_timestamp,
+  json_extract(device, '$.hostname') as hostname,
+  status,
+  severity,
+  confidence,
+  display_name
+from
+  crowdstrike_alert
+where
+  filter = 'product:''epp''+severity:>70+status:''new''';
 ```
