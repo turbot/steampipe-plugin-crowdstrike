@@ -11,8 +11,6 @@ CrowdStrike Alerts is a feature within the CrowdStrike Falcon platform that iden
 
 The `crowdstrike_alert` table provides insights into threat alerts within the CrowdStrike Falcon platform using the new Alerts API. As a cybersecurity analyst, use this table to explore detailed information about detected threats, including their tactics, techniques, and procedures. Leverage it to gain a comprehensive understanding of the threat landscape, identify potential vulnerabilities, and enhance your organization's security posture.
 
-**Note:** This table uses the new Alerts API which replaces the deprecated Detects API. The Detects API will reach end-of-life on September 30, 2025. For backward compatibility, the `crowdstrike_detection` table is still available but uses the deprecated API.
-
 **Important notes:**
 
 - By default, the table retrieves all available alerts.
