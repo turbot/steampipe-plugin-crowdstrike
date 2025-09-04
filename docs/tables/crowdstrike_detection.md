@@ -5,6 +5,8 @@ description: "Allows users to query CrowdStrike Detections, specifically the det
 
 # Table: crowdstrike_detection - Query CrowdStrike Detections using SQL
 
+**Deprecated. Use [crowdstrike_alert](https://hub.steampipe.io/plugins/turbot/crowdstrike/tables/crowdstrike_alert) instead.**
+
 CrowdStrike Detections is a feature within the CrowdStrike Falcon platform that identifies potential threats and incidents. It uses advanced AI and indicator-of-compromise (IOC) sweeps to detect malicious activities and behaviors. CrowdStrike Detections provide detailed information about the threat, including the threat family, tactics, techniques, and procedures (TTPs), allowing for a comprehensive understanding of the threat landscape.
 
 ## Table Usage Guide
