@@ -30,3 +30,8 @@
 # Output Binary
 steampipe-plugin-hibp
 steampipe-plugin-hibp.plugin
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride

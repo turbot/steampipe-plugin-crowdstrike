@@ -15,6 +15,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		},
 		DefaultTransform: transform.FromGo().NullIfZero(),
 		TableMap: map[string]*plugin.Table{
+			"crowdstrike_alert":                   tableCrowdStrikeAlert(ctx),
 			"crowdstrike_detection":               tableCrowdStrikeDetection(ctx),
 			"crowdstrike_host":                    tableCrowdStrikeHost(ctx),
 			"crowdstrike_intel_actor":             tableCrowdStrikeIntelActor(ctx),

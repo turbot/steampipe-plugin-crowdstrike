@@ -2,11 +2,8 @@ package crowdstrike
 
 import (
 	"context"
+	"errors"
 
-	"github.com/crowdstrike/gofalcon/falcon"
-	"github.com/crowdstrike/gofalcon/falcon/client"
-	"github.com/crowdstrike/gofalcon/falcon/client/detects"
-	"github.com/crowdstrike/gofalcon/falcon/models"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -58,10 +55,6 @@ func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 				},
 			},
 		},
-		Get: &plugin.GetConfig{
-			KeyColumns: plugin.SingleColumn("detection_id"),
-			Hydrate:    getCrowdStrikeDetection,
-		},
 		Columns: []*plugin.Column{
 			{Name: "adversary_ids", Description: "If behaviors or indicators in a detection are attributed to an adversary that is tracked by CrowdStrike Falcon Intelligence, those adversaries will have an ID associated with them. These IDs are found in a detection's metadata which can be viewed using the Detection Details API.", Type: proto.ColumnType_JSON, Transform: transform.FromJSONTag()},
 			{Name: "assigned_to_name", Description: "The human-readable name of the user to whom the detection is currently assigned.", Type: proto.ColumnType_STRING},
@@ -95,109 +88,6 @@ func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 
 func listCrowdStrikeDetections(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 
-	client, err := getCrowdStrikeClient(ctx, d)
-	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "connection_error", err)
-		return nil, err
-	}
-
-	limit := int64(500)
-	// Reduce the basic request limit down if the user has only requested a small number of rows
-	if d.QueryContext.Limit != nil && *d.QueryContext.Limit < limit {
-		limit = *d.QueryContext.Limit
-	}
-	filter, err := QualToFQL(ctx, d, QualToFqlNoKeyignore, "")
-	if err != nil {
-		return nil, err
-	}
-
-	for offset := int64(0); ; {
-		f := &filter
-		if len(filter) == 0 {
-			f = nil
-		}
-
-		response, err := client.Detects.QueryDetects(&detects.QueryDetectsParams{
-			Filter:  f,
-			Offset:  &offset,
-			Limit:   &limit,
-			Context: ctx,
-		})
-
-		if err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "query_error", err)
-			return nil, err
-		}
-		if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-			plugin.Logger(ctx).Error("crowdstrike_host.listCrowdStrikeDetections", "assert_error", err)
-			return nil, err
-		}
-
-		detectIdBatch := response.Payload.Resources
-		plugin.Logger(ctx).Trace("detect batch length", len(detectIdBatch))
-		detects, err := getDetectsByIds(ctx, client, detectIdBatch)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, detect := range detects {
-			d.StreamListItem(ctx, detect)
-			if d.RowsRemaining(ctx) < 1 {
-				return nil, nil
-			}
-		}
-
-		if err != nil {
-			return nil, err
-		}
-
-		offset = offset + int64(len(detectIdBatch))
-		if offset >= *response.Payload.Meta.Pagination.Total {
-			break
-		}
-	}
-
-	return nil, nil
-}
-
-func getCrowdStrikeDetection(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	client, err := getCrowdStrikeClient(ctx, d)
-	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetection", "connection_error", err)
-		return nil, err
-	}
-
-	detectId := d.EqualsQuals["detection_id"].GetStringValue()
-
-	detect, err := getDetectsByIds(ctx, client, []string{detectId})
-
-	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_detects.getCrowdStrikeDetection", "GetDetectSummaries error", err)
-		return nil, err
-	}
-
-	return detect[0], nil
-}
-
-func getDetectsByIds(ctx context.Context, client *client.CrowdStrikeAPISpecification, ids []string) ([]*models.DomainAPIDetectionDocument, error) {
-	if len(ids) == 0 {
-		return []*models.DomainAPIDetectionDocument{}, nil
-	}
-
-	response, err := client.Detects.GetDetectSummaries(
-		detects.NewGetDetectSummariesParamsWithContext(ctx).WithBody(&models.MsaIdsRequest{
-			Ids: ids,
-		}),
-	)
-
-	if err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
-		return nil, err
-	}
-	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-		plugin.Logger(ctx).Error("crowdstrike_detects.getDetectsByIds", "GetDetectSummaries", err)
-		return nil, err
-	}
-
-	return response.Payload.Resources, nil
+	err := errors.New("The crowdstrike_detection table has been deprecated and removed, please use crowdstrike_alert table instead.")
+	return nil, err
 }
