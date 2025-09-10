@@ -14,7 +14,7 @@ import (
 func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "crowdstrike_detection",
-		Description: "Detections are events identified by Falcon sensors on the hosts in your environment.",
+		Description: "[Deprecated] Detections are events identified by Falcon sensors on the hosts in your environment.",
 		List: &plugin.ListConfig{
 			Hydrate: listCrowdStrikeDetections,
 			KeyColumns: []*plugin.KeyColumn{
