@@ -1,3 +1,20 @@
+## v1.2.0 [2025-09-12]
+
+_Deprecations_
+
+- [crowdstrike_detection](https://hub.steampipe.io/plugins/turbot/crowdstrike/tables/crowdstrike_detection) table has been deprecated due to missing API support. It will be removed in a future major release. Please use [crowdstrike_alert](https://hub.steampipe.io/plugins/turbot/crowdstrike/tables/crowdstrike_alert) table instead. ([#57](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/57))
+
+_What's new?_
+
+- New tables added
+  - [crowdstrike_alert](https://hub.steampipe.io/plugins/turbot/crowdstrike/tables/crowdstrike_alert) ([#57](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/57))
+
+_Dependencies_
+
+- Recompiled plugin with `github.com/crowdstrike/gofalcon` with [v0.16.0](https://github.com/CrowdStrike/gofalcon/releases/tag/v0.16.0). ([#57](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/57))
+- Recompiled plugin with Go version `1.24`. ([#55](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/55))
+- Recompiled plugin with [steampipe-plugin-sdk v5.13.0](https://github.com/turbot/steampipe-plugin-sdk/blob/develop/CHANGELOG.md#v5130-2025-07-21) that addresses critical and high vulnerabilities in dependent packages. ([#55](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/55))
+
 ## v1.1.1 [2025-04-18]
 
 _Bug fixes_
