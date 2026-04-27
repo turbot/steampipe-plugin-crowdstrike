@@ -5,7 +5,7 @@ go 1.24
 toolchain go1.24.1
 
 require (
-	github.com/crowdstrike/gofalcon v0.16.0
+	github.com/crowdstrike/gofalcon v0.20.0
 	github.com/go-openapi/strfmt v0.22.2
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.13.1
 )
