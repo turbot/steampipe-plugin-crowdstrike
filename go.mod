@@ -3,7 +3,7 @@ module github.com/turbot/steampipe-plugin-crowdstrike
 go 1.26.0
 
 require (
-	github.com/crowdstrike/gofalcon v0.16.0
+	github.com/crowdstrike/gofalcon v0.22.0
 	github.com/go-openapi/strfmt v0.22.2
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.14.0
 )
@@ -24,6 +24,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/btubbs/datetime v0.1.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/dgraph-io/ristretto v0.2.0 // indirect
@@ -94,7 +95,7 @@ require (
 	github.com/turbot/go-kit v1.1.0 // indirect
 	github.com/ulikunitz/xz v0.5.15 // indirect
 	github.com/zclconf/go-cty v1.14.4 // indirect
-	go.mongodb.org/mongo-driver v1.14.0 // indirect
+	go.mongodb.org/mongo-driver v1.17.7 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.49.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0 // indirect
