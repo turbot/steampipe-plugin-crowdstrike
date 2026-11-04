@@ -50,6 +50,8 @@ func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, ze
 
 func contructFQLLine(ctx context.Context, qual *quals.Qual) (property string, operator string, value string) {
 	property = qual.Column
+	// The "cve_id" column is a flat alias exposed so CVE can be used as a qual,
+	// but the Spotlight API expects the nested FQL property "cve.id".
 	if property == "cve_id" {
 		property = "cve.id"
 	}
