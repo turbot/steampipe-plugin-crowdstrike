@@ -50,6 +50,9 @@ func QualToFQL(ctx context.Context, d *plugin.QueryData, ignoreKeys []string, ze
 
 func contructFQLLine(ctx context.Context, qual *quals.Qual) (property string, operator string, value string) {
 	property = qual.Column
+	if property == "cve_id" {
+		property = "cve.id"
+	}
 	switch qual.Operator {
 	case ">", ">=":
 		operator = ">"
@@ -75,6 +78,17 @@ func contructFQLLine(ctx context.Context, qual *quals.Qual) (property string, op
 		value = fmt.Sprintf("%f", qual.Value.GetDoubleValue())
 	case *proto.QualValue_StringValue:
 		value = fmt.Sprintf("'%s'", qual.Value.GetStringValue())
+	case *proto.QualValue_ListValue:
+		values := []string{}
+		for _, item := range qual.Value.GetListValue().Values {
+			_, _, literal := contructFQLLine(ctx, &quals.Qual{
+				Column:   qual.Column,
+				Operator: "=",
+				Value:    item,
+			})
+			values = append(values, literal)
+		}
+		value = "[" + strings.Join(values, ",") + "]"
 	case *proto.QualValue_TimestampValue:
 		asUtcTime := qual.Value.GetTimestampValue().AsTime().UTC()
 		value = fmt.Sprintf("'%s'", asUtcTime.Format(qualToFqlTimestampFormat))
