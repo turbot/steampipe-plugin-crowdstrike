@@ -1,3 +1,13 @@
+## v1.3.0 [2026-11-04]
+
+_What's new?_
+
+- Added the `cve_id` column to the `crowdstrike_spotlight_vulnerability` table, which can be used as an optional qual to filter vulnerabilities by CVE through the Spotlight API. ([#78](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/78))
+
+_Dependencies_
+
+- Recompiled plugin with [steampipe-plugin-sdk v6.1.0](https://github.com/turbot/steampipe-plugin-sdk/blob/v6.1.0/CHANGELOG.md). ([#XX](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/XX))
+
 ## v1.2.1 [2025-10-13]
 
 _Dependencies_
