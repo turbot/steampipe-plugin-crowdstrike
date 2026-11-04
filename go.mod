@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/crowdstrike/gofalcon v0.16.0
 	github.com/go-openapi/strfmt v0.22.2
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.14.0
+	github.com/turbot/steampipe-plugin-sdk/v6 v6.1.0
 )
 
 require (
