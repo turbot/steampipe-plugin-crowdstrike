@@ -6,7 +6,7 @@ _What's new?_
 
 _Dependencies_
 
-- Recompiled plugin with [steampipe-plugin-sdk v6.1.0](https://github.com/turbot/steampipe-plugin-sdk/blob/v6.1.0/CHANGELOG.md). ([#XX](https://github.com/turbot/steampipe-plugin-crowdstrike/pull/XX))
+- Recompiled plugin with [steampipe-plugin-sdk v6.1.0](https://github.com/turbot/steampipe-plugin-sdk/blob/v6.1.0/CHANGELOG.md).
 
 ## v1.2.1 [2025-10-13]
 
