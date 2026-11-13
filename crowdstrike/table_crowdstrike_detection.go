@@ -88,6 +88,6 @@ func tableCrowdStrikeDetection(_ context.Context) *plugin.Table {
 
 func listCrowdStrikeDetections(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 
-	err := errors.New("The crowdstrike_detection table has been deprecated and removed, please use crowdstrike_alert table instead.")
+	err := errors.New("the crowdstrike_detection table has been deprecated and removed, please use crowdstrike_alert table instead")
 	return nil, err
 }
