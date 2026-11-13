@@ -13,7 +13,7 @@ import (
 
 func getCrowdStrikeClient(ctx context.Context, d *plugin.QueryData) (*client.CrowdStrikeAPISpecification, error) {
 	// Try to load client from cache
-	if cachedData, ok := d.ConnectionManager.Cache.Get("crowdstrike"); ok {
+	if cachedData, ok := d.ConnectionCache.Get(ctx, "crowdstrike"); ok {
 		return cachedData.(*client.CrowdStrikeAPISpecification), nil
 	}
 
@@ -62,7 +62,7 @@ func getCrowdStrikeClient(ctx context.Context, d *plugin.QueryData) (*client.Cro
 	}
 
 	// save client in cache
-	d.ConnectionManager.Cache.Set("crowdstrike", client)
+	_ = d.ConnectionCache.Set(ctx, "crowdstrike", client)
 
 	return client, nil
 }
